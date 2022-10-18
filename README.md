@@ -1,1 +1,1 @@
-# arduino_stepper-motor
+# Arduino Stepper Motor control
