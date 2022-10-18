@@ -1,1 +1,1 @@
-# Arduino Stepper Motor control
+# Arduino Stepper Motor controler for arduino
