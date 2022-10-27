@@ -34,6 +34,7 @@ long receivedDelay_x, receivedDelay_y, receivedDelay_z, receivedDelay_Z = 0;
 
 bool newData, runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false;
 bool runstop_x, runstop_y, runstop_z, runstop_Z = false;
+bool concon = false;
 
 bool vector_x, vector_y, vector_z, vector_Z = true;
 
@@ -60,6 +61,7 @@ void setup()
 
   pinMode(CW_Z,OUTPUT);
   pinMode(CCW_Z,OUTPUT);
+
   delay(500);
 }
 
@@ -79,6 +81,7 @@ void loop()
     continuousRun_y();
     continuousRun_z();
     continuousRun_Z();
+    continuousRun_xy();
 //    time_a = millis();
 //    Serial.println("정회전 시작");
 //    CW_xn(step_count);
@@ -96,6 +99,26 @@ void loop()
   }
 }
 
+void CW_xyn(int n)
+{
+  for(int i=0; i<n; i++)
+  {
+    digitalWrite(CW_x,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_y,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_y,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+  }
+}
+void CCW_xyn(int n)
+{
+  for(int i=0; i<n; i++)
+  {
+    digitalWrite(CCW_x,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_y,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_y,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+  }
+}
 
 
 //////
@@ -204,8 +227,29 @@ void checkSerial()
       Serial.print(receivedDelay_x);
       Serial.println("Measure ");
 
-      CW_xn(step_count);
-      CCW_xn(step_count);
+    }
+
+    //sample xy axis
+    if (receivedCommand == 't') //this is the measure part
+    {
+      // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
+      runallowed_x = true;
+      runallowed_y = true;
+      runstop_x = false;
+      runstop_y = false;
+      concon = true;
+
+      receivedDistance_x = Serial.parseFloat();
+      receivedDelay_x = Serial.parseFloat();
+      receivedDistance_y = Serial.parseFloat();
+      receivedDelay_y = Serial.parseFloat();
+
+      Serial.print(receivedDistance_x);
+      Serial.print(receivedDelay_x);
+      Serial.print(receivedDistance_y);
+      Serial.print(receivedDelay_y);
+      Serial.println("xy axis: ");
+
     }
 
     // START - verse
@@ -215,14 +259,13 @@ void checkSerial()
       runallowed_x = true;
       runstop_x = true;
       vector_x = true;
-
+      
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
-
+      
       Serial.print(receivedDistance_x);
       Serial.print(receivedDelay_x);
       Serial.println("Moving ");
-      
       
     }
 
@@ -249,7 +292,7 @@ void checkSerial()
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_y = true;
-
+      runstop_y = false;
 
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
@@ -257,7 +300,7 @@ void checkSerial()
       Serial.print(receivedDistance_y);
       Serial.print(receivedDelay_y);
       Serial.println("Measure ");
-      
+
     }
 
     // START - reverse
@@ -265,6 +308,8 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_y = true;
+      runstop_y = true;
+      vector_y = true;
 
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
@@ -280,6 +325,8 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_y = true;
+      runstop_y = true;
+      vector_y = false;
 
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
@@ -389,6 +436,7 @@ void checkSerial()
     if (receivedCommand == 'q') //"stop-x"
     {
       runallowed_x = false;
+      concon = false;
 
       Serial.println("STOP ");
       
@@ -398,6 +446,7 @@ void checkSerial()
     if (receivedCommand == 'w') //"stop-y"
     {
       runallowed_y = false;
+      concon = false;
 
       Serial.println("STOP ");
       
@@ -407,6 +456,7 @@ void checkSerial()
     if (receivedCommand == 'e') //"stop-z"
     {
       runallowed_z = false;
+      concon = false;
 
       Serial.println("STOP ");
       
@@ -416,7 +466,18 @@ void checkSerial()
     if (receivedCommand == 'r') //"stop-Z"
     {
       runallowed_Z = false;
+      concon = false;
 
+      Serial.println("STOP ");
+      
+    }
+
+    // STOP
+    if (receivedCommand == 'y') //"stop-xy"
+    {
+      runallowed_x = false;
+      runallowed_y = false;
+      concon = false;
       Serial.println("STOP ");
       
     }
@@ -433,19 +494,29 @@ void checkSerial()
 ////////////////////////////////////////////////////////////////////////////////////
 
 
+void continuousRun_xy()
+{
+  if (runallowed_x == true && runallowed_y == true && runstop_x == false && runstop_y == false && concon == true)
+  {
+    CW_xyn(step_count);
+    CCW_xyn(step_count);
+  }
+}
+
+
 void continuousRun_x()
 {
-  if (runallowed_x == true && runstop_x == false)
+  if (runallowed_x == true && runstop_x == false && concon == false)
   {
     CW_xn(step_count);
     CCW_xn(step_count);
   }
-  else if (runallowed_x == true && runstop_x == true && vector_x == true)
+  else if (runallowed_x == true && runstop_x == true && vector_x == true && concon == false)
   {
     CW_xn(step_count);
     runallowed_x = false;
   }
-  else if (runallowed_x == true && runstop_x == true && vector_x == false)
+  else if (runallowed_x == true && runstop_x == true && vector_x == false && concon == false)
   {
     CCW_xn(step_count);
     runallowed_x = false;
@@ -459,17 +530,73 @@ void continuousRun_x()
 
 void continuousRun_y()
 {
-  return;
+  if (runallowed_y == true && runstop_y == false && concon == false)
+  {
+    CW_yn(step_count);
+    CCW_yn(step_count);
+  }
+  else if (runallowed_y == true && runstop_y == true && vector_y == true && concon == false)
+  {
+    CW_yn(step_count);
+    runallowed_y = false;
+  }
+  else if (runallowed_y == true && runstop_y == true && vector_y == false && concon == false)
+  {
+    CCW_yn(step_count);
+    runallowed_y = false;
+  }
+  else // program enters this part if the runallowed is FALSE, we do not do anything
+  {
+    return;
+  }
 }
+
 
 void continuousRun_z()
 {
-  return;
+  if (runallowed_z == true && runstop_z == false && concon == false)
+  {
+    CW_zn(step_count);
+    CCW_zn(step_count);
+  }
+  else if (runallowed_z == true && runstop_z == true && vector_z == true && concon == false)
+  {
+    CW_zn(step_count);
+    runallowed_z = false;
+  }
+  else if (runallowed_z == true && runstop_z == true && vector_z == false && concon == false)
+  {
+    CCW_zn(step_count);
+    runallowed_z = false;
+  }
+  else // program enters this part if the runallowed is FALSE, we do not do anything
+  {
+    return;
+  }
 }
+
+
 
 void continuousRun_Z()
 {
-  return;
+  if (runallowed_Z == true && runstop_Z == false && concon == false)
+  {
+    CW_Zn(step_count);
+    CCW_Zn(step_count);
+  }
+  else if (runallowed_Z == true && runstop_Z == true && vector_Z == true && concon == false)
+  {
+    CW_Zn(step_count);
+    runallowed_Z = false;
+  }
+  else if (runallowed_Z == true && runstop_Z == true && vector_Z == false && concon == false)
+  {
+    CCW_Zn(step_count);
+    runallowed_Z = false;
+  }
+  else // program enters this part if the runallowed is FALSE, we do not do anything
+  {
+    return;
+  }
 }
-
 
