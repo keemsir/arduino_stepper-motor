@@ -33,6 +33,9 @@ long receivedDistance_x, receivedDistance_y, receivedDistance_z, receivedDistanc
 long receivedDelay_x, receivedDelay_y, receivedDelay_z, receivedDelay_Z = 0;
 
 bool newData, runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false;
+bool runstop_x, runstop_y, runstop_z, runstop_Z = false;
+
+bool vector_x, vector_y, vector_z, vector_Z = true;
 
 
 char receivedCommand;
@@ -44,7 +47,7 @@ void setup()
   Serial.println("-----Testing Accelstepper Single Motor-----");
   Serial.println("Default value of step_count: 1800");
   Serial.println("Default value of step_time: 1800");
-  Serial.println("Insert parameters:");
+  Serial.println("Insert parameters(distance, delay):");
   delay(500);
   pinMode(CW_x,OUTPUT);
   pinMode(CCW_x,OUTPUT);
@@ -57,6 +60,7 @@ void setup()
 
   pinMode(CW_Z,OUTPUT);
   pinMode(CCW_Z,OUTPUT);
+  delay(500);
 }
 
 
@@ -69,20 +73,26 @@ void loop()
 {
 //  if (Serial.available() > 0)
   {
-    time_a = millis();
-    Serial.println("정회전 시작");
-    CW_xn(step_count);
-    time_b = millis();
+    checkSerial();
+    
+    continuousRun_x();
+    continuousRun_y();
+    continuousRun_z();
+    continuousRun_Z();
+//    time_a = millis();
+//    Serial.println("정회전 시작");
+//    CW_xn(step_count);
+//    time_b = millis();
     //
-    Serial.println("역회전 시작");
-    CCW_xn(step_count);
-    time_c = millis();
+//    Serial.println("역회전 시작");
+//    CCW_xn(step_count);
+//    time_c = millis();
     //
-    Serial.print("정회전 소요시간: ");
-    Serial.println(time_b-time_a);
-    Serial.print("역회전 소요시간: ");
-    Serial.println(time_c-time_b);
-    delay(100);
+//    Serial.print("정회전 소요시간: ");
+//    Serial.println(time_b-time_a);
+//    Serial.print("역회전 소요시간: ");
+//    Serial.println(time_c-time_b);
+//    delay(100);
   }
 }
 
@@ -185,6 +195,7 @@ void checkSerial()
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_x = true;
+      runstop_x = false;
 
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
@@ -202,6 +213,8 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_x = true;
+      runstop_x = true;
+      vector_x = true;
 
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
@@ -218,6 +231,8 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_x = true;
+      runstop_x = true;
+      vector_x = false;
 
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
@@ -418,36 +433,43 @@ void checkSerial()
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-void continuousRun_x(int n)
+void continuousRun_x()
 {
-  if (runallowed_x == true && repeat_x != false)
+  if (runallowed_x == true && runstop_x == false)
   {
-    for(int i=0; i<n; i++)
-    {
-      digitalWrite(CW_x,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-      digitalWrite(CW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    }
+    CW_xn(step_count);
+    CCW_xn(step_count);
   }
-  else if (runallowed_x == true && repaet_x == false && verse == true)
+  else if (runallowed_x == true && runstop_x == true && vector_x == true)
   {
-    for(int i=0; i<n; i++)
-    {
-      digitalWrite(CW_x,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-      digitalWrite(CW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    }
+    CW_xn(step_count);
+    runallowed_x = false;
   }
-  else if (runallowed_x == true && repaet_x == false && verse == false)
+  else if (runallowed_x == true && runstop_x == true && vector_x == false)
   {
-    for(int i=0; i<n; i++)
-    {
-      digitalWrite(CCW_x,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-      digitalWrite(CCW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    }
+    CCW_xn(step_count);
+    runallowed_x = false;
   }
   else // program enters this part if the runallowed is FALSE, we do not do anything
   {
     return;
   }
+}
+
+
+void continuousRun_y()
+{
+  return;
+}
+
+void continuousRun_z()
+{
+  return;
+}
+
+void continuousRun_Z()
+{
+  return;
 }
 
 
