@@ -3,6 +3,13 @@
 Part1(x, y, z), Part2(Z) 축 제어
 최대 입력 펄스 주파수: 500kHz = 500,000Hz
 
+        axis:    x,y,z,Z
+        ----------------
+keymap: cycle:   z,x,c,v
+        verse:   a,s,d,f
+        reverse: g,h,j,k
+        stop:    q,w,e,r
+
 최대 속도(x,y): step_time: 500 per step_count: 1800 (1cm: 0.9s)
 최대 속도(z,Z): step_time: 1500 per step_count: 900 (1cm: 2.4s)
 
@@ -76,12 +83,14 @@ void loop()
 //  if (Serial.available() > 0)
   {
     checkSerial();
-    
+
     continuousRun_x();
     continuousRun_y();
     continuousRun_z();
     continuousRun_Z();
     continuousRun_xy();
+
+//    Serial.println(time_b - time_a);
 //    time_a = millis();
 //    Serial.println("정회전 시작");
 //    CW_xn(step_count);
@@ -107,8 +116,13 @@ void CW_xyn(int n)
     digitalWrite(CW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
     digitalWrite(CW_y,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
     digitalWrite(CW_y,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_Z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_Z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
   }
 }
+
 void CCW_xyn(int n)
 {
   for(int i=0; i<n; i++)
@@ -117,12 +131,17 @@ void CCW_xyn(int n)
     digitalWrite(CCW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
     digitalWrite(CCW_y,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
     digitalWrite(CCW_y,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_Z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_Z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
   }
 }
 
 
+
 //////
-void CW_xn(int n)
+void CW_xn(int n, int step_time=step_time)
 {
   for(int i=0; i<n; i++)
   {
@@ -210,7 +229,7 @@ void checkSerial()
     receivedCommand = Serial.read();
     newData = true;
   }
-
+ 
   if (newData == true)
   {
     // motor-x moving
@@ -220,8 +239,11 @@ void checkSerial()
       runallowed_x = true;
       runstop_x = false;
 
-      receivedDistance_x = Serial.parseFloat();
-      receivedDelay_x = Serial.parseFloat();
+      step_count = Serial.parseFloat();
+      step_time = Serial.parseFloat();
+      
+//      receivedDistance_x = Serial.parseFloat();
+//      receivedDelay_x = Serial.parseFloat();
 
       Serial.print(receivedDistance_x);
       Serial.print(receivedDelay_x);
@@ -508,8 +530,12 @@ void continuousRun_x()
 {
   if (runallowed_x == true && runstop_x == false && concon == false)
   {
+    time_a = millis();
     CW_xn(step_count);
     CCW_xn(step_count);
+    time_b = millis();
+    Serial.print("time: ");
+    Serial.println(time_b-time_a);
   }
   else if (runallowed_x == true && runstop_x == true && vector_x == true && concon == false)
   {
@@ -599,4 +625,5 @@ void continuousRun_Z()
     return;
   }
 }
+
 
