@@ -18,17 +18,17 @@ keymap: cycle:   z,x,c,v
 // CW+에 연결 // CW-는 GND에 연결
 // CCW+에 연결 // CCW-는 GND에 연결
 
-#define CW_x    2
-#define CCW_x   3
+#define CW_x    22
+#define CCW_x   24
 
-#define CW_y    4
-#define CCW_y   5
+#define CW_y    30
+#define CCW_y   32
 
-#define CW_z    6
-#define CCW_z   7
+#define CW_z    38
+#define CCW_z   40
 
-#define CW_Z    10
-#define CCW_Z   11
+#define CW_Z    46
+#define CCW_Z   48
 
 
 int step_count = 2000; // 500 one cycle (Distance)
@@ -48,7 +48,8 @@ bool vector_x, vector_y, vector_z, vector_Z = true;
 
 char receivedCommand;
 
-//////
+////////////////////////////////////
+
 void setup()
 {
   Serial.begin(115200);
@@ -73,9 +74,10 @@ void setup()
 }
 
 
-//////
-// 정 1회전 0.72/7.2 (1:7.2) = 0.1, 360 = 3600*0.1
-// 역 1회전 0.72/7.2 (1:7.2) = 0.1, 360 = 3600*0.1
+////////////////////////////////////
+
+// cw 1cycle 0.72/7.2 (1:7.2) = 0.1, 360 = 3600*0.1
+// ccw 1cycle 0.72/7.2 (1:7.2) = 0.1, 360 = 3600*0.1
 
 
 void loop()
@@ -88,7 +90,7 @@ void loop()
     continuousRun_y();
     continuousRun_z();
     continuousRun_Z();
-    continuousRun_xy();
+    continuousRun_xyzZ();
 
 //    Serial.println(time_b - time_a);
 //    time_a = millis();
@@ -108,40 +110,40 @@ void loop()
   }
 }
 
-void CW_xyn(int n)
+void CW_xyzZn(int n)
 {
   for(int i=0; i<n; i++)
   {
-    digitalWrite(CW_x,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_y,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_y,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_Z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_Z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_x,HIGH); delayMicroseconds(receivedDelay_x); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_x,LOW); delayMicroseconds(receivedDelay_x); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_y,HIGH); delayMicroseconds(receivedDelay_y); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_y,LOW); delayMicroseconds(receivedDelay_y); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_z,HIGH); delayMicroseconds(receivedDelay_z); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_z,LOW); delayMicroseconds(receivedDelay_z); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_Z,HIGH); delayMicroseconds(receivedDelay_Z); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_Z,LOW); delayMicroseconds(receivedDelay_Z); // pulse = 500,000Hz = 500kHz
   }
 }
 
-void CCW_xyn(int n)
+void CCW_xyzZn(int n)
 {
   for(int i=0; i<n; i++)
   {
-    digitalWrite(CCW_x,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CCW_x,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CCW_y,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CCW_y,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CCW_z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CCW_z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CCW_Z,HIGH); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CCW_Z,LOW); delayMicroseconds(step_time); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_x,HIGH); delayMicroseconds(receivedDelay_x); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_x,LOW); delayMicroseconds(receivedDelay_x); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_y,HIGH); delayMicroseconds(receivedDelay_y); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_y,LOW); delayMicroseconds(receivedDelay_y); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_z,HIGH); delayMicroseconds(receivedDelay_z); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_z,LOW); delayMicroseconds(receivedDelay_z); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_Z,HIGH); delayMicroseconds(receivedDelay_Z); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CCW_Z,LOW); delayMicroseconds(receivedDelay_Z); // pulse = 500,000Hz = 500kHz
   }
 }
-
+ 
 
 
 //////
-void CW_xn(int n, int step_time=step_time)
+void CW_xn(int n, int step_time=step_time, int step_sep=3)
 {
   for(int i=0; i<n; i++)
   {
@@ -229,7 +231,7 @@ void checkSerial()
     receivedCommand = Serial.read();
     newData = true;
   }
- 
+  
   if (newData == true)
   {
     // motor-x moving
@@ -238,16 +240,18 @@ void checkSerial()
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_x = true;
       runstop_x = false;
-
-      step_count = Serial.parseFloat();
-      step_time = Serial.parseFloat();
       
-//      receivedDistance_x = Serial.parseFloat();
-//      receivedDelay_x = Serial.parseFloat();
+//      step_count = Serial.parseFloat();
+//      step_time = Serial.parseFloat();
+      
+      receivedDistance_x = Serial.parseFloat();
+      receivedDelay_x = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_x);
-      Serial.print(receivedDelay_x);
-      Serial.println("Measure ");
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_x);
+      
 
     }
 
@@ -257,21 +261,34 @@ void checkSerial()
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_x = true;
       runallowed_y = true;
+      runallowed_z = true;
+      runallowed_Z = true;
       runstop_x = false;
       runstop_y = false;
+      runstop_z = false;
+      runstop_Z = false;
       concon = true;
-
+      
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
-
+      receivedDistance_z = Serial.parseFloat();
+      receivedDelay_z = Serial.parseFloat();
+      receivedDistance_Z = Serial.parseFloat();
+      receivedDelay_Z = Serial.parseFloat();
+      
+      
       Serial.print(receivedDistance_x);
       Serial.print(receivedDelay_x);
       Serial.print(receivedDistance_y);
       Serial.print(receivedDelay_y);
+      Serial.print(receivedDistance_z);
+      Serial.print(receivedDelay_z);
+      Serial.print(receivedDistance_Z);
+      Serial.print(receivedDelay_Z);
       Serial.println("xy axis: ");
-
+      
     }
 
     // START - verse
@@ -495,10 +512,12 @@ void checkSerial()
     }
 
     // STOP
-    if (receivedCommand == 'y') //"stop-xy"
+    if (receivedCommand == 'y') //"stop-xyzZ"
     {
       runallowed_x = false;
       runallowed_y = false;
+      runallowed_z = false;
+      runallowed_Z = false;
       concon = false;
       Serial.println("STOP ");
       
@@ -511,17 +530,25 @@ void checkSerial()
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void continuousRun_xy()
+void continuousRun_xyzZ()
 {
-  if (runallowed_x == true && runallowed_y == true && runstop_x == false && runstop_y == false && concon == true)
+  if (runallowed_x == true && runallowed_y == true && runallowed_z == true && runallowed_Z == true &&
+  runstop_x == false && runstop_y == false && runstop_z == false && runstop_Z == false && concon == true)
   {
-    CW_xyn(step_count);
-    CCW_xyn(step_count);
+    time_a = millis();
+    CW_xyzZn(step_count);
+    time_b = millis();
+    CCW_xyzZn(step_count);
+    time_c = millis();
+    Serial.print("time(b-a): ");
+    Serial.println(time_b-time_a);
+    Serial.print("time(c-b): ");
+    Serial.println(time_c-time_b);
   }
 }
 
@@ -532,10 +559,13 @@ void continuousRun_x()
   {
     time_a = millis();
     CW_xn(step_count);
-    CCW_xn(step_count);
     time_b = millis();
-    Serial.print("time: ");
+    CCW_xn(step_count);
+    time_c = millis();
+    Serial.print("time(b-a): ");
     Serial.println(time_b-time_a);
+    Serial.print("time(c-b): ");
+    Serial.println(time_c-time_b);
   }
   else if (runallowed_x == true && runstop_x == true && vector_x == true && concon == false)
   {
@@ -558,8 +588,15 @@ void continuousRun_y()
 {
   if (runallowed_y == true && runstop_y == false && concon == false)
   {
+    time_a = millis();
     CW_yn(step_count);
+    time_b = millis();
     CCW_yn(step_count);
+    time_c = millis();
+    Serial.print("time(b-a): ");
+    Serial.println(time_b-time_a);
+    Serial.print("time(c-b): ");
+    Serial.println(time_c-time_b);
   }
   else if (runallowed_y == true && runstop_y == true && vector_y == true && concon == false)
   {
@@ -582,8 +619,15 @@ void continuousRun_z()
 {
   if (runallowed_z == true && runstop_z == false && concon == false)
   {
+    time_a = millis();
     CW_zn(step_count);
+    time_b = millis();
     CCW_zn(step_count);
+    time_c = millis();
+    Serial.print("time(b-a): ");
+    Serial.println(time_b-time_a);
+    Serial.print("time(c-b): ");
+    Serial.println(time_c-time_b);
   }
   else if (runallowed_z == true && runstop_z == true && vector_z == true && concon == false)
   {
@@ -595,7 +639,7 @@ void continuousRun_z()
     CCW_zn(step_count);
     runallowed_z = false;
   }
-  else // program enters this part if the runallowed is FALSE, we do not do anything
+  else // program enters this part i f the runallowed is FALSE, we do not do anything
   {
     return;
   }
@@ -607,8 +651,15 @@ void continuousRun_Z()
 {
   if (runallowed_Z == true && runstop_Z == false && concon == false)
   {
+    time_a = millis();
     CW_Zn(step_count);
+    time_b = millis();
     CCW_Zn(step_count);
+    time_c = millis();
+    Serial.print("time(b-a): ");
+    Serial.println(time_b-time_a);
+    Serial.print("time(c-b): ");
+    Serial.println(time_c-time_b);
   }
   else if (runallowed_Z == true && runstop_Z == true && vector_Z == true && concon == false)
   {
