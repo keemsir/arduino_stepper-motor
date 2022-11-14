@@ -1,18 +1,14 @@
 /*
-
 Part1(x, y, z), Part2(Z) 축 제어
 최대 입력 펄스 주파수: 500kHz = 500,000Hz
-
         axis:    x,y,z,Z
         ----------------
 keymap: cycle:   z,x,c,v
         verse:   a,s,d,f
         reverse: g,h,j,k
         stop:    q,w,e,r
-
 최대 속도(x,y): step_time: 500 per step_count: 1800 (1cm: 0.9s)
 최대 속도(z,Z): step_time: 1500 per step_count: 900 (1cm: 2.4s)
-
 */
 
 // CW+에 연결 // CW-는 GND에 연결
@@ -459,15 +455,15 @@ void checkSerial()
     // START - reverse
     if (receivedCommand == 'k')
     {
-      runallowed_z = true;
+      runallowed_Z = true;
       runstop_Z = true;
       vector_Z = false;
 
-      receivedDistance_z = Serial.parseFloat();
-      receivedDelay_z = receivedDistance_Z*10;
+      receivedDistance_Z = Serial.parseFloat();
+      receivedDelay_Z = receivedDistance_Z*10;
 
-      Serial.print(receivedDistance_z);
-      Serial.print(receivedDelay_z);
+      Serial.print(receivedDistance_Z);
+      Serial.print(receivedDelay_Z);
       Serial.println("Moving ");
       
     }
@@ -480,7 +476,7 @@ void checkSerial()
       runstop_x = false;
       vector_x = true;
 
-      receivedDistance_x, receivedDelay_x = 0
+      receivedDistance_x, receivedDelay_x = 0;
 
       Serial.println("STOP ");
     }
@@ -492,7 +488,7 @@ void checkSerial()
       runstop_y = false;
       vector_y = true;
 
-      receivedDistance_y, receivedDelay_y = 0
+      receivedDistance_y, receivedDelay_y = 0;
 
       Serial.println("STOP ");
     }
@@ -504,7 +500,7 @@ void checkSerial()
       runstop_z = false;
       vector_z = true;
 
-      receivedDistance_z, receivedDelay_z = 0
+      receivedDistance_z, receivedDelay_z = 0;
 
       Serial.println("STOP ");
     }
@@ -516,7 +512,7 @@ void checkSerial()
       runstop_Z = false;
       vector_Z = true;
       
-      receivedDistance_Z, receivedDelay_Z = 0
+      receivedDistance_Z, receivedDelay_Z = 0;
 
       Serial.println("STOP ");
     }
@@ -527,8 +523,8 @@ void checkSerial()
     {
       runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false;
 
-      receivedDistance_x, receivedDelay_x, receivedDistance_y, receivedDelay_y = 0
-      receivedDistance_z, receivedDelay_z, receivedDistance_Z, receivedDelay_Z = 0
+      receivedDistance_x, receivedDelay_x, receivedDistance_y, receivedDelay_y = 0;
+      receivedDistance_z, receivedDelay_z, receivedDistance_Z, receivedDelay_Z = 0;
       
       concon = false;
       Serial.println("STOP ");
@@ -687,4 +683,3 @@ void continuousRun_Z()
     return;
   }
 }
-
