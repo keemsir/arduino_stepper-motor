@@ -31,8 +31,8 @@ keymap: cycle:   z,x,c,v
 #define CCW_Z   48
 
 
-int step_count = 200; // 500 one cycle (Distance)
-int step_time = 500; // 500 one cycle = (Delay)
+int step_count = 600; // 500 one cycle (Distance)
+int step_time = 2000; // 500 one cycle = (Delay)
 
 unsigned long time_a, time_b, time_c;
 
@@ -57,7 +57,7 @@ void setup()
   Serial.println("Default value of step_count: 1800");
   Serial.println("Default value of step_time: 1800");
   Serial.println("Insert parameters(distance, delay):");
-  delay(500);
+
   pinMode(CW_x,OUTPUT);
   pinMode(CCW_x,OUTPUT);
 
@@ -70,7 +70,6 @@ void setup()
   pinMode(CW_Z,OUTPUT);
   pinMode(CCW_Z,OUTPUT);
 
-  delay(500);
 }
 
 
@@ -148,7 +147,7 @@ void CW_xn(int n, int step_time=step_time, int step_sep=3)
   for(int i=0; i<n; i++)
   {
     digitalWrite(CW_x,HIGH); delayMicroseconds(receivedDelay_x); // pulse = 500,000Hz = 500kHz
-    digitalWrite(CW_x,LOW); delayMicroseconds(step_timreceivedDelay_x); // pulse = 500,000Hz = 500kHz
+    digitalWrite(CW_x,LOW); delayMicroseconds(receivedDelay_x); // pulse = 500,000Hz = 500kHz
     
   }
 }
@@ -234,31 +233,10 @@ void checkSerial()
   
   if (newData == true)
   {
-    // motor-x moving
-    if (receivedCommand == 'z') //this is the measure part
-    {
-      // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
-      runallowed_x = true;
-      runstop_x = false;
-      
-//      step_count = Serial.parseFloat();
-//      step_time = Serial.parseFloat();
-      
-      receivedDistance_x = Serial.parseFloat();
-      receivedDelay_x = Serial.parseFloat();
-
-      Serial.print("Distance: ");
-      Serial.print(receivedDistance_x);
-      Serial.print(", Delay: ");
-      Serial.println(receivedDelay_x);
-      
-
-    }
 
     //sample xyzZ axis
     if (receivedCommand == 't') //this is the measure part
     {
-      // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_x = true;
       runallowed_y = true;
       runallowed_z = true;
@@ -288,19 +266,37 @@ void checkSerial()
       Serial.print(receivedDistance_Z);
       Serial.print(receivedDelay_Z);
       Serial.println("xyzZ axis: ");
+    }
+
+
+    // motor-x axis moving
+    if (receivedCommand == 'z') //this is x part
+    {
       
+      runallowed_x = true;
+      runstop_x = false;
+      
+      receivedDistance_x = Serial.parseFloat();
+      receivedDelay_x = Serial.parseFloat();
+
+      Serial.print("Distance: ");
+      Serial.print(receivedDistance_x);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_x);
+      
+
     }
 
     // START - verse
     if (receivedCommand == 'a')
     {
-      // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
+
       runallowed_x = true;
       runstop_x = true;
       vector_x = true;
       
       receivedDistance_x = Serial.parseFloat();
-      receivedDelay_x = Serial.parseFloat();
+      receivedDelay_x = receivedDistance_x*10;
       
       Serial.print(receivedDistance_x);
       Serial.print(receivedDelay_x);
@@ -317,17 +313,17 @@ void checkSerial()
       vector_x = false;
 
       receivedDistance_x = Serial.parseFloat();
-      receivedDelay_x = Serial.parseFloat();
+      receivedDelay_x = receivedDistance_x*10;
 
       Serial.print(receivedDistance_x);
       Serial.print(receivedDelay_x);
       Serial.println("Moving ");
-
       
     }
 
-    // motor-y moving
-    if (receivedCommand == 'x') //this is the measure part
+
+    // motor-y axis moving
+    if (receivedCommand == 'x') //this is y-axis part
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_y = true;
@@ -351,7 +347,7 @@ void checkSerial()
       vector_y = true;
 
       receivedDistance_y = Serial.parseFloat();
-      receivedDelay_y = Serial.parseFloat();
+      receivedDelay_y = receivedDistance_y*10;
 
       Serial.print(receivedDistance_y);
       Serial.print(receivedDelay_y);
@@ -368,7 +364,7 @@ void checkSerial()
       vector_y = false;
 
       receivedDistance_y = Serial.parseFloat();
-      receivedDelay_y = Serial.parseFloat();
+      receivedDelay_y = receivedDistance_y*10;
 
       Serial.print(receivedDistance_y);
       Serial.print(receivedDelay_y);
@@ -377,11 +373,11 @@ void checkSerial()
     }
     
 
-    // motor-z moving
-    if (receivedCommand == 'c') //this is the measure part
+    // motor-z axis moving
+    if (receivedCommand == 'c') //this is z-axis part
     {
-      // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_z = true;
+      runstop_z = false;
 
 
       receivedDistance_z = Serial.parseFloat();
@@ -396,11 +392,12 @@ void checkSerial()
     // START - verse
     if (receivedCommand == 'd')
     {
-      // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_z = true;
+      runstop_z = true;
+      vector_z = true;
 
       receivedDistance_z = Serial.parseFloat();
-      receivedDelay_z = Serial.parseFloat();
+      receivedDelay_z = receivedDistance_z*10;
 
       Serial.print(receivedDistance_z);
       Serial.print(receivedDelay_z);
@@ -413,9 +410,11 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_z = true;
+      runstop_z = true;
+      vector_z = false;
 
       receivedDistance_z = Serial.parseFloat();
-      receivedDelay_z = Serial.parseFloat();
+      receivedDelay_z = receivedDistance_z*10;
 
       Serial.print(receivedDistance_z);
       Serial.print(receivedDelay_z);
@@ -424,11 +423,12 @@ void checkSerial()
     }
 
 
-    // motor-Z moving
-    if (receivedCommand == 'v') //this is the measure part
+    // motor-Z axis moving
+    if (receivedCommand == 'v') //this is Z-axis part
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_Z = true;
+      runstop_Z = false;
 
 
       receivedDistance_Z = Serial.parseFloat();
@@ -443,11 +443,12 @@ void checkSerial()
     // START - verse
     if (receivedCommand == 'f')
     {
-      // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_Z = true;
+      runstop_Z = true;
+      vector_Z = true;
 
       receivedDistance_Z = Serial.parseFloat();
-      receivedDelay_Z = Serial.parseFloat();
+      receivedDelay_Z = receivedDistance_Z*10;
 
       Serial.print(receivedDistance_Z);
       Serial.print(receivedDelay_Z);
@@ -458,11 +459,12 @@ void checkSerial()
     // START - reverse
     if (receivedCommand == 'k')
     {
-      // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_z = true;
+      runstop_Z = true;
+      vector_Z = false;
 
       receivedDistance_z = Serial.parseFloat();
-      receivedDelay_z = Serial.parseFloat();
+      receivedDelay_z = receivedDistance_Z*10;
 
       Serial.print(receivedDistance_z);
       Serial.print(receivedDelay_z);
@@ -475,52 +477,61 @@ void checkSerial()
     if (receivedCommand == 'q') //"stop-x"
     {
       runallowed_x = false;
-      concon = false;
+      runstop_x = false;
+      vector_x = true;
+
+      receivedDistance_x, receivedDelay_x = 0
 
       Serial.println("STOP ");
-      
     }
 
     // STOP
     if (receivedCommand == 'w') //"stop-y"
     {
       runallowed_y = false;
-      concon = false;
+      runstop_y = false;
+      vector_y = true;
+
+      receivedDistance_y, receivedDelay_y = 0
 
       Serial.println("STOP ");
-      
     }
 
     // STOP
     if (receivedCommand == 'e') //"stop-z"
     {
       runallowed_z = false;
-      concon = false;
+      runstop_z = false;
+      vector_z = true;
+
+      receivedDistance_z, receivedDelay_z = 0
 
       Serial.println("STOP ");
-      
     }
 
     // STOP
     if (receivedCommand == 'r') //"stop-Z"
     {
       runallowed_Z = false;
-      concon = false;
+      runstop_Z = false;
+      vector_Z = true;
+      
+      receivedDistance_Z, receivedDelay_Z = 0
 
       Serial.println("STOP ");
-      
     }
+
 
     // STOP
     if (receivedCommand == 'y') //"stop-xyzZ"
     {
-      runallowed_x = false;
-      runallowed_y = false;
-      runallowed_z = false;
-      runallowed_Z = false;
+      runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false;
+
+      receivedDistance_x, receivedDelay_x, receivedDistance_y, receivedDelay_y = 0
+      receivedDistance_z, receivedDelay_z, receivedDistance_Z, receivedDelay_Z = 0
+      
       concon = false;
       Serial.println("STOP ");
-      
     }
 
   }
@@ -676,3 +687,4 @@ void continuousRun_Z()
     return;
   }
 }
+
