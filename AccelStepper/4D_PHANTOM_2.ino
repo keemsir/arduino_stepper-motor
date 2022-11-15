@@ -1,4 +1,7 @@
 /*
+ex) t1650 250 1650 250 650 250 650 250
+
+x축,y축 1650 step -> 1cm
 Part1(x, y, z), Part2(Z) 축 제어
 최대 입력 펄스 주파수: 500kHz = 500,000Hz
         axis:    x,y,z,Z
@@ -14,14 +17,14 @@ keymap: cycle:   z,x,c,v
 // CW+에 연결 // CW-는 GND에 연결
 // CCW+에 연결 // CCW-는 GND에 연결
 
-#define CW_x    22
-#define CCW_x   24
+#define CW_x    24
+#define CCW_x   22
 
 #define CW_y    30
 #define CCW_y   32
 
-#define CW_z    38
-#define CCW_z   40
+#define CW_z    40
+#define CCW_z   38
 
 #define CW_Z    46
 #define CCW_Z   48
