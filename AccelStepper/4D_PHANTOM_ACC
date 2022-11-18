@@ -68,6 +68,7 @@ bool repeat_1 = false;
 
 //bool newData, runallowed = false; // booleans for new data from serial, and runallowed flag
 bool newData, runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false; // booleans for new data from serial, and runallowed flag
+bool RepeatOperation_x, RepeatOperation_y, RepeatOperation_z, RepeatOperation_Z = false;
 //bool trans_dir1, trans_dir2, trans_dir3 = true; // steppermotor direction
 
 
@@ -125,7 +126,6 @@ void loop()
   continuousRun_y();
   continuousRun_z();
   continuousRun_Z();
-  
 }
 
 
@@ -151,6 +151,7 @@ void checkSerial()
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_x = true;
+      RepeatOperation_x = true;
 
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
@@ -159,6 +160,7 @@ void checkSerial()
       Serial.print(receivedDistance_x);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_x);
+      stepper_x.setCurrentPosition(0);
       stepper_x.move(receivedDistance_x);
       stepper_x.setMaxSpeed(receivedDelay_x);
 
@@ -169,14 +171,16 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_x = true;
+      RepeatOperation_x = false;
 
       receivedDistance_x = Serial.parseFloat();
-      receivedDelay_x = Serial.parseFloat();
+      receivedDelay_x = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_x);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_x);
+      stepper_x.setCurrentPosition(0);
       stepper_x.move(receivedDistance_x);
       stepper_x.setMaxSpeed(receivedDelay_x);
     }
@@ -186,14 +190,16 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_x = true;
+      RepeatOperation_x = false;
 
       receivedDistance_x = Serial.parseFloat();
-      receivedDelay_x = Serial.parseFloat();
+      receivedDelay_x = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_x);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_x);
+      stepper_x.setCurrentPosition(0);
       stepper_x.move(-1 * receivedDistance_x);
       stepper_x.setMaxSpeed(receivedDelay_x);
     }
@@ -203,7 +209,7 @@ void checkSerial()
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_y = true;
-
+      RepeatOperation_y = true;
 
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
@@ -212,6 +218,7 @@ void checkSerial()
       Serial.print(receivedDistance_y);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_y);
+      stepper_y.setCurrentPosition(0);
       stepper_y.move(receivedDistance_y);
       stepper_y.setMaxSpeed(receivedDelay_y);
     }
@@ -221,14 +228,16 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_y = true;
+      RepeatOperation_y = false;
 
       receivedDistance_y = Serial.parseFloat();
-      receivedDelay_y = Serial.parseFloat();
+      receivedDelay_y = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_y);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_y);
+      stepper_y.setCurrentPosition(0);
       stepper_y.move(receivedDistance_y);
       stepper_y.setMaxSpeed(receivedDelay_y);
     }
@@ -238,14 +247,16 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_y = true;
+      RepeatOperation_y = false;
 
       receivedDistance_y = Serial.parseFloat();
-      receivedDelay_y = Serial.parseFloat();
+      receivedDelay_y = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_y);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_y);
+      stepper_y.setCurrentPosition(0);
       stepper_y.move(-1 * receivedDistance_y);
       stepper_y.setMaxSpeed(receivedDelay_y);
     }
@@ -256,7 +267,7 @@ void checkSerial()
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_z = true;
-
+      RepeatOperation_z = true;
 
       receivedDistance_z = Serial.parseFloat();
       receivedDelay_z = Serial.parseFloat();
@@ -265,6 +276,7 @@ void checkSerial()
       Serial.print(receivedDistance_z);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_z);
+      stepper_z.setCurrentPosition(0);
       stepper_z.move(receivedDistance_z);
       stepper_z.setMaxSpeed(receivedDelay_z);
     }
@@ -274,14 +286,16 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_z = true;
+      RepeatOperation_z = false;
 
       receivedDistance_z = Serial.parseFloat();
-      receivedDelay_z = Serial.parseFloat();
+      receivedDelay_z = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_z);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_z);
+      stepper_z.setCurrentPosition(0);
       stepper_z.move(receivedDistance_z);
       stepper_z.setMaxSpeed(receivedDelay_z);
     }
@@ -291,14 +305,16 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_z = true;
+      RepeatOperation_z = false;
 
       receivedDistance_z = Serial.parseFloat();
-      receivedDelay_z = Serial.parseFloat();
+      receivedDelay_z = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_z);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_z);
+      stepper_z.setCurrentPosition(0);
       stepper_z.move(-1 * receivedDistance_z);
       stepper_z.setMaxSpeed(receivedDelay_z);
     }
@@ -309,6 +325,7 @@ void checkSerial()
     {
       // example a 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed
       runallowed_Z = true;
+      RepeatOperation_Z = true;
 
 
       receivedDistance_Z = Serial.parseFloat();
@@ -318,6 +335,7 @@ void checkSerial()
       Serial.print(receivedDistance_Z);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_Z);
+      stepper_Z.setCurrentPosition(0);
       stepper_Z.move(receivedDistance_Z);
       stepper_Z.setMaxSpeed(receivedDelay_Z);
     }
@@ -327,14 +345,16 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_Z = true;
+      RepeatOperation_Z = false;
 
       receivedDistance_Z = Serial.parseFloat();
-      receivedDelay_Z = Serial.parseFloat();
+      receivedDelay_Z = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_Z);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_Z);
+      stepper_Z.setCurrentPosition(0);
       stepper_Z.move(receivedDistance_Z);
       stepper_Z.setMaxSpeed(receivedDelay_Z);
     }
@@ -344,22 +364,26 @@ void checkSerial()
     {
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_Z = true;
+      RepeatOperation_Z = false;
 
       receivedDistance_Z = Serial.parseFloat();
-      receivedDelay_Z = Serial.parseFloat();
+      receivedDelay_Z = 500;
 
       Serial.print("Distance: ");
       Serial.print(receivedDistance_Z);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_Z);
+      stepper_Z.setCurrentPosition(0);
       stepper_Z.move(-1 * receivedDistance_Z);
       stepper_Z.setMaxSpeed(receivedDelay_Z);
     }
+
 
     // STOP the stepper motor
     if (receivedCommand == 'q') //"stop-x"
     {
       runallowed_x = false;
+      RepeatOperation_x = false;
 
 //      stepper_x.setCurrentPosition(0);
       Serial.println("STOP ");
@@ -372,8 +396,9 @@ void checkSerial()
     if (receivedCommand == 'w') //"stop-y"
     {
       runallowed_y = false;
+      RepeatOperation_y = false;
 
-      stepper_y.setCurrentPosition(0);
+//      stepper_y.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_y.stop();
       stepper_y.disableOutputs();
@@ -384,8 +409,9 @@ void checkSerial()
     if (receivedCommand == 'e') //"stop-z"
     {
       runallowed_z = false;
+      RepeatOperation_z = false;
 
-      stepper_z.setCurrentPosition(0);
+//      stepper_z.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_z.stop();
       stepper_z.disableOutputs();
@@ -396,8 +422,9 @@ void checkSerial()
     if (receivedCommand == 'r') //"stop-Z"
     {
       runallowed_Z = false;
+      RepeatOperation_Z = false;
 
-      stepper_Z.setCurrentPosition(0);
+//      stepper_Z.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_Z.stop();
       stepper_Z.disableOutputs();
@@ -427,17 +454,33 @@ void checkSerial()
 
 void continuousRun_x()
 {
-  if (runallowed_x == true)
+  if (runallowed_x == true && RepeatOperation_x == true)
   {
     if (stepper_x.distanceToGo() == 0)
     {
+      Serial.print("x-axis motor position: ");
+      Serial.println(stepper_x.currentPosition());
       stepper_x.moveTo(-stepper_x.currentPosition());
-
     }
     stepper_x.enableOutputs();
     stepper_x.run();
 
   }
+  
+  else if (runallowed_x == true && RepeatOperation_x == false)
+  {
+    if (stepper_x.distanceToGo() != 0)
+    {
+      stepper_x.enableOutputs();
+      stepper_x.run();
+    }
+    else
+    {
+      stepper_x.stop();
+      stepper_x.disableOutputs();
+    }
+  }
+  
   else // program enters this part if the runallowed is FALSE, we do not do anything
   {
     return;
@@ -449,7 +492,7 @@ void continuousRun_x()
 void continuousRun_y()
 {
 
-  if (runallowed_y == true)
+  if (runallowed_y == true && RepeatOperation_y == true)
   {
     if (stepper_y.distanceToGo() == 0)
     {
@@ -457,8 +500,22 @@ void continuousRun_y()
     }
     stepper_y.enableOutputs();
     stepper_y.run();
-
   }
+
+  else if (runallowed_y == true && RepeatOperation_y == false)
+  {
+    if (stepper_y.distanceToGo() != 0)
+    {
+      stepper_y.enableOutputs();
+      stepper_y.run();
+    }
+    else
+    {
+      stepper_y.stop();
+      stepper_y.disableOutputs();
+    }
+  }
+  
   else // program enters this part if the runallowed is FALSE, we do not do anything
   {
     return;
@@ -470,7 +527,7 @@ void continuousRun_y()
 void continuousRun_z()
 {
 
-  if (runallowed_z == true)
+  if (runallowed_z == true && RepeatOperation_z == true)
   {
     if (stepper_z.distanceToGo() == 0)
     {
@@ -479,8 +536,22 @@ void continuousRun_z()
     
     stepper_z.enableOutputs();
     stepper_z.run();
-
   }
+
+  else if (runallowed_z == true && RepeatOperation_z == false)
+  {
+    if (stepper_z.distanceToGo() != 0)
+    {
+      stepper_z.enableOutputs();
+      stepper_z.run();
+    }
+    else
+    {
+      stepper_z.stop();
+      stepper_z.disableOutputs();
+    }
+  }
+  
   else // program enters this part if the runallowed is FALSE, we do not do anything
   {
     return;
@@ -491,7 +562,7 @@ void continuousRun_z()
 void continuousRun_Z()
 {
 
-  if (runallowed_Z == true)
+  if (runallowed_Z == true && RepeatOperation_Z == true)
   {
     if (stepper_Z.distanceToGo() == 0)
     {
@@ -500,8 +571,22 @@ void continuousRun_Z()
     
     stepper_Z.enableOutputs();
     stepper_Z.run();
-
   }
+
+  else if (runallowed_Z == true && RepeatOperation_Z == false)
+  {
+    if (stepper_Z.distanceToGo() != 0)
+    {
+      stepper_Z.enableOutputs();
+      stepper_Z.run();
+    }
+    else
+    {
+      stepper_Z.stop();
+      stepper_Z.disableOutputs();
+    }
+  }
+  
   else // program enters this part if the runallowed is FALSE, we do not do anything
   {
     return;
@@ -520,6 +605,7 @@ void updateSelection()
   Serial.println();
 }
 
+
 void GoHome()
 {
   if (stepper_x.currentPosition() == 0)
@@ -529,8 +615,10 @@ void GoHome()
   }
   else
   {
+    stepper_x.enableOutputs();
     stepper_x.setMaxSpeed(400);
     stepper_x.moveTo(0);
+    stepper_x.run();
   }
 }
 
