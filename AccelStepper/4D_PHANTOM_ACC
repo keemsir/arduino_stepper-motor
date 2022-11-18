@@ -3,18 +3,39 @@
 #include <AccelStepper.h>
 //#include <MultiStepper.h>
 
+// -
+#define CW_x    22
+#define CCW_x   24
+// +
+#define CW_y    30
+#define CCW_y   32
+// -
+#define CW_z    38
+#define CCW_z   40
+// +
+#define CW_Z    46
+#define CCW_Z   48
+
 /// input PWM setting
 /// 
-
+//AccelStepper 
 //AccelStepper stepper_x(AccelStepper::DRIVER,2,3);
 //AccelStepper stepper_y(AccelStepper::DRIVER,4,5);
 //AccelStepper stepper_z(AccelStepper::DRIVER,10,11);
 //AccelStepper stepper_Z(AccelStepper::DRIVER,12,13);
 
-AccelStepper stepper_x(AccelStepper::DRIVER, 24, 22); // CW+: PLS(pulse), CCW+: DIR
-AccelStepper stepper_y(AccelStepper::DRIVER, 30, 32); // CW+: PLS(pulse), CCW+: DIR
-AccelStepper stepper_z(AccelStepper::DRIVER, 40, 38); // CW+: PLS(pulse), CCW+: DIR
-AccelStepper stepper_Z(AccelStepper::DRIVER, 46, 48); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper FULL4WIRE mode
+AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
+AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
+AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
+AccelStepper stepper_Z(AccelStepper::FULL4WIRE,10,12,11,13);
+
+//AccelStepper DRIVER mode (CLK 1)
+//AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper stepper_Z(AccelStepper::DRIVER, CW_Z, CCW_Z); // CW+: PLS(pulse), CCW+: DIR
+
 
 //MultiStepper steppers;
 
@@ -30,14 +51,15 @@ long receivedDelay_y = 0;
 long receivedDelay_z = 0;
 long receivedDelay_Z = 0;
 
-long receivedAcceleration_x = 0;
-long receivedAcceleration_y = 0;
-long receivedAcceleration_z = 0;
-long receivedAcceleration_Z = 0;
+//long receivedAcceleration_x = 0;
+//long receivedAcceleration_y = 0;
+//long receivedAcceleration_z = 0;
+//long receivedAcceleration_Z = 0;
 
 char receivedCommand;
 char movedAxis = '0';
 
+//unsigned long time_a, time_b, time_c;
 
 //temp
 volatile int stepPosition = 0;
@@ -55,38 +77,38 @@ bool newData, runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false; //
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("-----Testing Accelstepper Single Motor-----");
+  Serial.println("-----Starting Accelstepper Motor-----");
+  Serial.println("input axis: setMaxSpeed, Move");
 
-  // 1 revolution Motor 1 CW
+  // 1 revolution Motor x CW
   stepper_x.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_x.setAcceleration(400.0); // ACCELERATION = Steps / (second)^2
+  stepper_x.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
   stepper_x.setSpeed(1000);
-  stepper_x.moveTo(128);
+//  stepper_x.moveTo(128);
   stepper_x.disableOutputs();
 
 //  repeat_1 = false;
 
-  // 1 revolution Motor 2 CW
+  // 1 revolution Motor y CW
   stepper_y.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_y.setAcceleration(400.0); // ACCELERATION = Steps / (second)^2
-  stepper_y.setSpeed(1000);
+  stepper_y.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
+//  stepper_y.setSpeed(1000);
   stepper_y.moveTo(128);
   stepper_y.disableOutputs();
 
-  // 1 revolution Motor 3 CW
+  // 1 revolution Motor z CW
   stepper_z.setMaxSpeed(2000.0); // SPEED = Steps / second
   stepper_z.setAcceleration(400.0); // ACCELERATION = Steps / (second)^2
-  stepper_z.setSpeed(1000);
+//  stepper_z.setSpeed(1000);
   stepper_z.moveTo(128);
   stepper_z.disableOutputs();
 
-  // 1 revolution Motor 3 CW
+  // 1 revolution Motor Z CW
   stepper_Z.setMaxSpeed(2000.0); // SPEED = Steps / second
   stepper_Z.setAcceleration(400.0); // ACCELERATION = Steps / (second)^2
   stepper_Z.setSpeed(1000);
   stepper_Z.moveTo(128);
   stepper_Z.disableOutputs();
-
 
 }
 
@@ -103,32 +125,7 @@ void loop()
   continuousRun_y();
   continuousRun_z();
   continuousRun_Z();
-
-//  if (receivedCommand == 'z')
-//  {
-//    Serial.print("XX: ");
-//    Serial.print(receivedCommand);
-//    Serial.print(receivedDistance_x);
-//    Serial.println(receivedDelay_x);
-//    //continuousRun_x();
-//  }
-//  if (receivedCommand == 'x')
-//  {
-//    Serial.print("YY: ");
-//    Serial.print(receivedCommand);
-//    Serial.print(receivedDistance_y);
-//    Serial.println(receivedDelay_y);
-//    //continuousRun_y();
-//  }
-//  if (receivedCommand == 'c')
-//  {
-//    Serial.print("ZZ: ");
-//    Serial.print(receivedCommand);
-//    Serial.print(receivedDistance_z);
-//    Serial.println(receivedDelay_z);
-//    //continuousRun_z();
-//  }
-
+  
 }
 
 
@@ -158,13 +155,15 @@ void checkSerial()
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_x);
-      Serial.print(receivedDelay_x);
-      Serial.println("Measure ");
-      stepper_x.setMaxSpeed(receivedDelay_x);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_x);
       stepper_x.move(receivedDistance_x);
-    }
+      stepper_x.setMaxSpeed(receivedDelay_x);
 
+    }
+    
     // START - verse
     if (receivedCommand == 'a')
     {
@@ -174,11 +173,12 @@ void checkSerial()
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_x);
-      Serial.print(receivedDelay_x);
-      Serial.println("Moving ");
-      stepper_x.setMaxSpeed(receivedDelay_x);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_x);
       stepper_x.move(receivedDistance_x);
+      stepper_x.setMaxSpeed(receivedDelay_x);
     }
 
     // START - reverse
@@ -190,11 +190,12 @@ void checkSerial()
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_x);
-      Serial.print(receivedDelay_x);
-      Serial.println("Moving ");
-      stepper_x.setMaxSpeed(receivedDelay_x);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_x);
       stepper_x.move(-1 * receivedDistance_x);
+      stepper_x.setMaxSpeed(receivedDelay_x);
     }
 
     // motor 2 moving
@@ -207,11 +208,12 @@ void checkSerial()
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_y);
-      Serial.print(receivedDelay_y);
-      Serial.println("Measure ");
-      stepper_y.setMaxSpeed(receivedDelay_y);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_y);
       stepper_y.move(receivedDistance_y);
+      stepper_y.setMaxSpeed(receivedDelay_y);
     }
 
     // START - reverse
@@ -223,11 +225,12 @@ void checkSerial()
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_y);
-      Serial.print(receivedDelay_y);
-      Serial.println("Moving ");
-      stepper_y.setMaxSpeed(receivedDelay_y);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_y);
       stepper_y.move(receivedDistance_y);
+      stepper_y.setMaxSpeed(receivedDelay_y);
     }
 
     // START - reverse
@@ -239,11 +242,12 @@ void checkSerial()
       receivedDistance_y = Serial.parseFloat();
       receivedDelay_y = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_y);
-      Serial.print(receivedDelay_y);
-      Serial.println("Moving ");
-      stepper_y.setMaxSpeed(receivedDelay_y);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_y);
       stepper_y.move(-1 * receivedDistance_y);
+      stepper_y.setMaxSpeed(receivedDelay_y);
     }
     
 
@@ -257,11 +261,12 @@ void checkSerial()
       receivedDistance_z = Serial.parseFloat();
       receivedDelay_z = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_z);
-      Serial.print(receivedDelay_z);
-      Serial.println("Measure ");
-      stepper_z.setMaxSpeed(receivedDelay_z);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_z);
       stepper_z.move(receivedDistance_z);
+      stepper_z.setMaxSpeed(receivedDelay_z);
     }
 
     // START - reverse
@@ -273,11 +278,12 @@ void checkSerial()
       receivedDistance_z = Serial.parseFloat();
       receivedDelay_z = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_z);
-      Serial.print(receivedDelay_z);
-      Serial.println("Moving ");
-      stepper_z.setMaxSpeed(receivedDelay_z);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_z);
       stepper_z.move(receivedDistance_z);
+      stepper_z.setMaxSpeed(receivedDelay_z);
     }
 
     // START - reverse
@@ -289,11 +295,12 @@ void checkSerial()
       receivedDistance_z = Serial.parseFloat();
       receivedDelay_z = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_z);
-      Serial.print(receivedDelay_z);
-      Serial.println("Moving ");
-      stepper_z.setMaxSpeed(receivedDelay_z);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_z);
       stepper_z.move(-1 * receivedDistance_z);
+      stepper_z.setMaxSpeed(receivedDelay_z);
     }
 
 
@@ -307,11 +314,12 @@ void checkSerial()
       receivedDistance_Z = Serial.parseFloat();
       receivedDelay_Z = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_Z);
-      Serial.print(receivedDelay_Z);
-      Serial.println("Measure ");
-      stepper_Z.setMaxSpeed(receivedDelay_Z);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_Z);
       stepper_Z.move(receivedDistance_Z);
+      stepper_Z.setMaxSpeed(receivedDelay_Z);
     }
 
     // START - reverse
@@ -323,11 +331,12 @@ void checkSerial()
       receivedDistance_Z = Serial.parseFloat();
       receivedDelay_Z = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_Z);
-      Serial.print(receivedDelay_Z);
-      Serial.println("Moving ");
-      stepper_Z.setMaxSpeed(receivedDelay_Z);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_Z);
       stepper_Z.move(receivedDistance_Z);
+      stepper_Z.setMaxSpeed(receivedDelay_Z);
     }
 
     // START - reverse
@@ -339,26 +348,27 @@ void checkSerial()
       receivedDistance_Z = Serial.parseFloat();
       receivedDelay_Z = Serial.parseFloat();
 
+      Serial.print("Distance: ");
       Serial.print(receivedDistance_Z);
-      Serial.print(receivedDelay_Z);
-      Serial.println("Moving ");
-      stepper_Z.setMaxSpeed(receivedDelay_Z);
+      Serial.print(", Delay: ");
+      Serial.println(receivedDelay_Z);
       stepper_Z.move(-1 * receivedDistance_Z);
+      stepper_Z.setMaxSpeed(receivedDelay_Z);
     }
 
-    // START - STOP
+    // STOP the stepper motor
     if (receivedCommand == 'q') //"stop-x"
     {
       runallowed_x = false;
 
-      stepper_x.setCurrentPosition(0);
+//      stepper_x.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_x.stop();
       stepper_x.disableOutputs();
       
     }
 
-    // START - STOP
+    // STOP the stepper motor
     if (receivedCommand == 'w') //"stop-y"
     {
       runallowed_y = false;
@@ -370,7 +380,7 @@ void checkSerial()
       
     }
 
-    // START - STOP
+    // STOP the stepper motor
     if (receivedCommand == 'e') //"stop-z"
     {
       runallowed_z = false;
@@ -382,7 +392,7 @@ void checkSerial()
       
     }
 
-    // START - STOP
+    // STOP the stepper motor
     if (receivedCommand == 'r') //"stop-Z"
     {
       runallowed_Z = false;
@@ -392,6 +402,15 @@ void checkSerial()
       stepper_Z.stop();
       stepper_Z.disableOutputs();
       
+    }
+
+
+    // Homing the stepper motor
+    if (receivedCommand == 'p')
+    {
+//      runallowed_x = false;
+      Serial.println("Homing the x-axis motor");
+      GoHome();
     }
 
   }
@@ -493,8 +512,6 @@ void continuousRun_Z()
 void printVIEW()
 {
   Serial.println();
-  Serial.println();
-  Serial.println();
 }
 
 
@@ -503,5 +520,20 @@ void updateSelection()
   Serial.println();
 }
 
+void GoHome()
+{
+  if (stepper_x.currentPosition() == 0)
+  {
+    Serial.println("Going at the home position.");
+    stepper_x.disableOutputs();
+  }
+  else
+  {
+    stepper_x.setMaxSpeed(400);
+    stepper_x.moveTo(0);
+  }
+}
+
 
 // url: https://www.youtube.com/watch?v=AR0un3kg-iM
+
