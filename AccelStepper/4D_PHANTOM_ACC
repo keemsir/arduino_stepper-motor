@@ -25,16 +25,16 @@
 //AccelStepper stepper_Z(AccelStepper::DRIVER,12,13);
 
 //AccelStepper FULL4WIRE mode
-AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
-AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
-AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
-AccelStepper stepper_Z(AccelStepper::FULL4WIRE,10,12,11,13);
+//AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
+//AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
+//AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
+//AccelStepper stepper_Z(AccelStepper::FULL4WIRE,10,12,11,13);
 
 //AccelStepper DRIVER mode (CLK 1)
-//AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
-//AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
-//AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
-//AccelStepper stepper_Z(AccelStepper::DRIVER, CW_Z, CCW_Z); // CW+: PLS(pulse), CCW+: DIR
+AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
+AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
+AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
+AccelStepper stepper_Z(AccelStepper::DRIVER, CW_Z, CCW_Z); // CW+: PLS(pulse), CCW+: DIR
 
 
 //MultiStepper steppers;
@@ -83,8 +83,8 @@ void setup()
 
   // 1 revolution Motor x CW
   stepper_x.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_x.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
-  stepper_x.setSpeed(1000);
+  stepper_x.setAcceleration(3000.0); // ACCELERATION = Steps / (second)^2
+//  stepper_x.setSpeed(1000);
 //  stepper_x.moveTo(128);
   stepper_x.disableOutputs();
 
@@ -92,22 +92,22 @@ void setup()
 
   // 1 revolution Motor y CW
   stepper_y.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_y.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
+  stepper_y.setAcceleration(3000.0); // ACCELERATION = Steps / (second)^2
 //  stepper_y.setSpeed(1000);
   stepper_y.moveTo(128);
   stepper_y.disableOutputs();
 
   // 1 revolution Motor z CW
   stepper_z.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_z.setAcceleration(400.0); // ACCELERATION = Steps / (second)^2
+  stepper_z.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
 //  stepper_z.setSpeed(1000);
   stepper_z.moveTo(128);
   stepper_z.disableOutputs();
 
   // 1 revolution Motor Z CW
   stepper_Z.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_Z.setAcceleration(400.0); // ACCELERATION = Steps / (second)^2
-  stepper_Z.setSpeed(1000);
+  stepper_Z.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
+//  stepper_Z.setSpeed(1000);
   stepper_Z.moveTo(128);
   stepper_Z.disableOutputs();
 
@@ -181,7 +181,7 @@ void checkSerial()
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_x);
       stepper_x.setCurrentPosition(0);
-      stepper_x.move(receivedDistance_x);
+      stepper_x.move(-1 * receivedDistance_x);
       stepper_x.setMaxSpeed(receivedDelay_x);
     }
 
@@ -200,7 +200,7 @@ void checkSerial()
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_x);
       stepper_x.setCurrentPosition(0);
-      stepper_x.move(-1 * receivedDistance_x);
+      stepper_x.move(receivedDistance_x);
       stepper_x.setMaxSpeed(receivedDelay_x);
     }
 
@@ -296,7 +296,7 @@ void checkSerial()
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_z);
       stepper_z.setCurrentPosition(0);
-      stepper_z.move(receivedDistance_z);
+      stepper_z.move(-1 * receivedDistance_z);
       stepper_z.setMaxSpeed(receivedDelay_z);
     }
 
@@ -315,7 +315,7 @@ void checkSerial()
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_z);
       stepper_z.setCurrentPosition(0);
-      stepper_z.move(-1 * receivedDistance_z);
+      stepper_z.move(receivedDistance_z);
       stepper_z.setMaxSpeed(receivedDelay_z);
     }
 
@@ -621,7 +621,3 @@ void GoHome()
     stepper_x.run();
   }
 }
-
-
-// url: https://www.youtube.com/watch?v=AR0un3kg-iM
-
