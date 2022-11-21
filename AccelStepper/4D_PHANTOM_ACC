@@ -25,16 +25,16 @@
 //AccelStepper stepper_Z(AccelStepper::DRIVER,12,13);
 
 //AccelStepper FULL4WIRE mode
-//AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
-//AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
-//AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
-//AccelStepper stepper_Z(AccelStepper::FULL4WIRE,10,12,11,13);
+AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
+AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
+AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
+AccelStepper stepper_Z(AccelStepper::FULL4WIRE,10,12,11,13);
 
 //AccelStepper DRIVER mode (CLK 1)
-AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
-AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
-AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
-AccelStepper stepper_Z(AccelStepper::DRIVER, CW_Z, CCW_Z); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
+//AccelStepper stepper_Z(AccelStepper::DRIVER, CW_Z, CCW_Z); // CW+: PLS(pulse), CCW+: DIR
 
 
 //MultiStepper steppers;
@@ -59,7 +59,7 @@ long receivedDelay_Z = 0;
 char receivedCommand;
 char movedAxis = '0';
 
-//unsigned long time_a, time_b, time_c;
+unsigned long time_x, time_y, time_z, time_Z;
 
 //temp
 volatile int stepPosition = 0;
@@ -83,7 +83,7 @@ void setup()
 
   // 1 revolution Motor x CW
   stepper_x.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_x.setAcceleration(3000.0); // ACCELERATION = Steps / (second)^2
+  stepper_x.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
 //  stepper_x.setSpeed(1000);
 //  stepper_x.moveTo(128);
   stepper_x.disableOutputs();
@@ -92,7 +92,7 @@ void setup()
 
   // 1 revolution Motor y CW
   stepper_y.setMaxSpeed(2000.0); // SPEED = Steps / second
-  stepper_y.setAcceleration(3000.0); // ACCELERATION = Steps / (second)^2
+  stepper_y.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
 //  stepper_y.setSpeed(1000);
   stepper_y.moveTo(128);
   stepper_y.disableOutputs();
@@ -121,11 +121,12 @@ void setup()
 void loop()
 {
   checkSerial();
-  
+
   continuousRun_x();
   continuousRun_y();
   continuousRun_z();
   continuousRun_Z();
+
 }
 
 
@@ -155,15 +156,14 @@ void checkSerial()
 
       receivedDistance_x = Serial.parseFloat();
       receivedDelay_x = Serial.parseFloat();
-
+      
       Serial.print("Distance: ");
       Serial.print(receivedDistance_x);
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_x);
       stepper_x.setCurrentPosition(0);
-      stepper_x.move(receivedDistance_x);
+      stepper_x.move(-1 * receivedDistance_x);
       stepper_x.setMaxSpeed(receivedDelay_x);
-
     }
     
     // START - verse
@@ -277,7 +277,7 @@ void checkSerial()
       Serial.print(", Delay: ");
       Serial.println(receivedDelay_z);
       stepper_z.setCurrentPosition(0);
-      stepper_z.move(receivedDistance_z);
+      stepper_z.move(-1 * receivedDistance_z);
       stepper_z.setMaxSpeed(receivedDelay_z);
     }
 
@@ -443,7 +443,6 @@ void checkSerial()
   }
   // after we went through the above tasks, newData becomes false again, so we are ready to receive new commands again.
   newData = false;
-
 }
 
 
@@ -461,10 +460,22 @@ void continuousRun_x()
       Serial.print("x-axis motor position: ");
       Serial.println(stepper_x.currentPosition());
       stepper_x.moveTo(-stepper_x.currentPosition());
+
+      if (stepper_x.currentPosition() == receivedDistance_x)
+      {
+        time_x = millis();
+        Serial.print("time(x): ");
+        Serial.println(time_x-time_y);
+      }
+      else if (stepper_x.currentPosition() == -receivedDistance_x)
+      {
+        time_y = millis();
+        Serial.print("time(x): ");
+        Serial.println(time_y-time_x);
+      }
     }
     stepper_x.enableOutputs();
     stepper_x.run();
-
   }
   
   else if (runallowed_x == true && RepeatOperation_x == false)
@@ -496,7 +507,10 @@ void continuousRun_y()
   {
     if (stepper_y.distanceToGo() == 0)
     {
+      Serial.print("y-axis motor position: ");
+      Serial.println(stepper_y.currentPosition());
       stepper_y.moveTo(-stepper_y.currentPosition());
+
     }
     stepper_y.enableOutputs();
     stepper_y.run();
@@ -621,3 +635,5 @@ void GoHome()
     stepper_x.run();
   }
 }
+
+
