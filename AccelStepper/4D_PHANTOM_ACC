@@ -59,7 +59,7 @@ long receivedDelay_Z = 0;
 char receivedCommand;
 char movedAxis = '0';
 
-unsigned long time_x, time_y, time_z, time_Z;
+unsigned long time_x, time_x1, time_y, time_y1, time_z, time_z1, time_Z, time_Z1;
 
 //temp
 volatile int stepPosition = 0;
@@ -465,13 +465,13 @@ void continuousRun_x()
       {
         time_x = millis();
         Serial.print("time(x): ");
-        Serial.println(time_x-time_y);
+        Serial.println(time_x-time_x1);
       }
       else if (stepper_x.currentPosition() == -receivedDistance_x)
       {
-        time_y = millis();
+        time_x1 = millis();
         Serial.print("time(x): ");
-        Serial.println(time_y-time_x);
+        Serial.println(time_x1-time_x);
       }
     }
     stepper_x.enableOutputs();
@@ -511,6 +511,18 @@ void continuousRun_y()
       Serial.println(stepper_y.currentPosition());
       stepper_y.moveTo(-stepper_y.currentPosition());
 
+      if (stepper_y.currentPosition() == receivedDistance_y)
+      {
+        time_y = millis();
+        Serial.print("time(y): ");
+        Serial.println(time_y-time_y1);
+      }
+      else if (stepper_y.currentPosition() == -receivedDistance_y)
+      {
+        time_y1 = millis();
+        Serial.print("time(y): ");
+        Serial.println(time_y1-time_y);
+      }
     }
     stepper_y.enableOutputs();
     stepper_y.run();
@@ -545,9 +557,23 @@ void continuousRun_z()
   {
     if (stepper_z.distanceToGo() == 0)
     {
+      Serial.print("z-axis motor position: ");
+      Serial.println(stepper_z.currentPosition());
       stepper_z.moveTo(-stepper_z.currentPosition());
+
+      if (stepper_z.currentPosition() == receivedDistance_z)
+      {
+        time_z = millis();
+        Serial.print("time(z): ");
+        Serial.println(time_z-time_z1);
+      }
+      else if (stepper_z.currentPosition() == -receivedDistance_z)
+      {
+        time_z1 = millis();
+        Serial.print("time(z): ");
+        Serial.println(time_z1-time_z);
+      }
     }
-    
     stepper_z.enableOutputs();
     stepper_z.run();
   }
@@ -580,9 +606,23 @@ void continuousRun_Z()
   {
     if (stepper_Z.distanceToGo() == 0)
     {
+      Serial.print("Z-axis motor position: ");
+      Serial.println(stepper_Z.currentPosition());
       stepper_Z.moveTo(-stepper_Z.currentPosition());
+
+      if (stepper_Z.currentPosition() == receivedDistance_Z)
+      {
+        time_Z = millis();
+        Serial.print("time(Z): ");
+        Serial.println(time_Z-time_Z1);
+      }
+      else if (stepper_Z.currentPosition() == -receivedDistance_Z)
+      {
+        time_Z1 = millis();
+        Serial.print("time(Z): ");
+        Serial.println(time_Z1-time_Z);
+      }
     }
-    
     stepper_Z.enableOutputs();
     stepper_Z.run();
   }
