@@ -1,4 +1,5 @@
 //// include library ////
+//ex) z500 500 \n x400 360 -> time(x): 2665, time(y): 2658
 
 #include <AccelStepper.h>
 //#include <MultiStepper.h>
@@ -16,6 +17,10 @@
 #define CW_Z    46
 #define CCW_Z   48
 
+// encoder setting (NC: GND, NO: 5V, COM: pwm)
+#define Encoder_x1      11
+
+
 /// input PWM setting
 /// 
 //AccelStepper 
@@ -27,8 +32,8 @@
 //AccelStepper FULL4WIRE mode
 AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
 AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
-AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
-AccelStepper stepper_Z(AccelStepper::FULL4WIRE,10,12,11,13);
+AccelStepper stepper_z(AccelStepper::FULL4WIRE,6,8,7,9);
+AccelStepper stepper_Z(AccelStepper::FULL4WIRE,6,8,7,9);
 
 //AccelStepper DRIVER mode (CLK 1)
 //AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
@@ -69,7 +74,7 @@ bool repeat_1 = false;
 //bool newData, runallowed = false; // booleans for new data from serial, and runallowed flag
 bool newData, runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false; // booleans for new data from serial, and runallowed flag
 bool RepeatOperation_x, RepeatOperation_y, RepeatOperation_z, RepeatOperation_Z = false;
-//bool trans_dir1, trans_dir2, trans_dir3 = true; // steppermotor direction
+bool Homing_x, Homing_y, Homing_z, Homing_Z = false; // 
 
 
 // Define x,y,z,Z axis motor objects
@@ -80,6 +85,9 @@ void setup()
   Serial.begin(115200);
   Serial.println("-----Starting Accelstepper Motor-----");
   Serial.println("input axis: setMaxSpeed, Move");
+
+  pinMode(Encoder_x1,INPUT);
+
 
   // 1 revolution Motor x CW
   stepper_x.setMaxSpeed(2000.0); // SPEED = Steps / second
@@ -120,13 +128,28 @@ void setup()
 
 void loop()
 {
+// Checking the serial
   checkSerial();
 
+// Runing the stepper motor (x,y,z,Z axis)
   continuousRun_x();
   continuousRun_y();
   continuousRun_z();
   continuousRun_Z();
 
+// Rotary encoder
+  if (digitalRead(Encoder_x1) == HIGH)
+  {
+    Serial.println("NC");
+  }
+//
+//  if (digitalRead(NO))
+//  {
+//    Serial.println(NO);
+//  }
+  delay(1000);
+
+  GoHome();
 }
 
 
@@ -389,7 +412,6 @@ void checkSerial()
       Serial.println("STOP ");
       stepper_x.stop();
       stepper_x.disableOutputs();
-      
     }
 
     // STOP the stepper motor
@@ -402,7 +424,6 @@ void checkSerial()
       Serial.println("STOP ");
       stepper_y.stop();
       stepper_y.disableOutputs();
-      
     }
 
     // STOP the stepper motor
@@ -415,7 +436,6 @@ void checkSerial()
       Serial.println("STOP ");
       stepper_z.stop();
       stepper_z.disableOutputs();
-      
     }
 
     // STOP the stepper motor
@@ -428,16 +448,35 @@ void checkSerial()
       Serial.println("STOP ");
       stepper_Z.stop();
       stepper_Z.disableOutputs();
-      
     }
 
 
-    // Homing the stepper motor
+    // Homing the stepper motor x-axis
+    if (receivedCommand == 'u')
+    {
+      Homing_x = true;
+      Serial.println("Homing the x-axis motor");
+    }
+
+    // Homing the stepper motor y-axis
+    if (receivedCommand == 'i')
+    {
+      Homing_y = true;
+      Serial.println("Homing the y-axis motor");
+    }
+
+    // Homing the stepper motor z-axis
+    if (receivedCommand == 'o')
+    {
+      Homing_z = true;
+      Serial.println("Homing the z-axis motor");
+    }
+
+    // Homing the stepper motor Z-axis
     if (receivedCommand == 'p')
     {
-//      runallowed_x = false;
-      Serial.println("Homing the x-axis motor");
-      GoHome();
+      Homing_Z = true;
+      Serial.println("Homing the Z-axis motor");
     }
 
   }
@@ -660,20 +699,73 @@ void updateSelection()
 }
 
 
-void GoHome()
+void GoHome() // homing
 {
-  if (stepper_x.currentPosition() == 0)
+  if (Homing_x == true)
   {
-    Serial.println("Going at the home position.");
-    stepper_x.disableOutputs();
+    if (stepper_x.currentPosition() == 0 && Homing_x == true)
+    {
+      Serial.println("Going at the x-axis home position.");
+      stepper_x.disableOutputs();
+      Homing_x = false;
+    }
+    else
+    {
+      stepper_x.enableOutputs();
+      stepper_x.setMaxSpeed(400);
+      stepper_x.moveTo(0);
+      stepper_x.run();
+    }
   }
-  else
+
+  if (Homing_y == true)
   {
-    stepper_x.enableOutputs();
-    stepper_x.setMaxSpeed(400);
-    stepper_x.moveTo(0);
-    stepper_x.run();
+    if (stepper_y.currentPosition() == 0 && Homing_y == true)
+    {
+      Serial.println("Going at the y-axis home position.");
+      stepper_y.disableOutputs();
+      Homing_y = false;
+    }
+    else
+    {
+      stepper_y.enableOutputs();
+      stepper_y.setMaxSpeed(400);
+      stepper_y.moveTo(0);
+      stepper_y.run();
+    }
+  }
+
+  if (Homing_z == true)
+  {
+    if (stepper_z.currentPosition() == 0 && Homing_z == true)
+    {
+      Serial.println("Going at the z-axis home position.");
+      stepper_z.disableOutputs();
+      Homing_z = false;
+    }
+    else
+    {
+      stepper_z.enableOutputs();
+      stepper_z.setMaxSpeed(400);
+      stepper_z.moveTo(0);
+      stepper_z.run();
+    }
+  }
+
+  if (Homing_Z == true)
+  {
+    if (stepper_Z.currentPosition() == 0 && Homing_Z == true)
+    {
+      Serial.println("Going at the Z-axis home position.");
+      stepper_Z.disableOutputs();
+      Homing_Z = false;
+    }
+    else
+    {
+      stepper_Z.enableOutputs();
+      stepper_Z.setMaxSpeed(400);
+      stepper_Z.moveTo(0);
+      stepper_Z.run();
+    }
   }
 }
-
-
