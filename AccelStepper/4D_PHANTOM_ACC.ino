@@ -1,5 +1,10 @@
+
 //// include library ////
-//ex) z500 500 \n x400 360 -> time(x): 2665, time(y): 2658
+// scale: millisecond(ms)
+// ex) z500 500 \n x400 367 -> time(x): 2641, time(y): 2641
+
+// z750 1000 \n x750 1000 \n c500 800 \n v500 800 (acc: 2000, 1200)
+// 1.5cm, 1.5cm, 1cm, 1.5cm (xyzZ)
 
 #include <AccelStepper.h>
 //#include <MultiStepper.h>
@@ -22,7 +27,7 @@
 
 
 /// input PWM setting
-/// 
+///
 //AccelStepper 
 //AccelStepper stepper_x(AccelStepper::DRIVER,2,3);
 //AccelStepper stepper_y(AccelStepper::DRIVER,4,5);
@@ -82,7 +87,7 @@ bool Homing_x, Homing_y, Homing_z, Homing_Z = false; //
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(115200); // 115200
   Serial.println("-----Starting Accelstepper Motor-----");
   Serial.println("input axis: setMaxSpeed, Move");
 
@@ -90,7 +95,7 @@ void setup()
 
 
   // 1 revolution Motor x CW
-  stepper_x.setMaxSpeed(2000.0); // SPEED = Steps / second
+//  stepper_x.setMaxSpeed(2000.0); // SPEED = Steps / second
   stepper_x.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
 //  stepper_x.setSpeed(1000);
 //  stepper_x.moveTo(128);
@@ -99,27 +104,28 @@ void setup()
 //  repeat_1 = false;
 
   // 1 revolution Motor y CW
-  stepper_y.setMaxSpeed(2000.0); // SPEED = Steps / second
+//  stepper_y.setMaxSpeed(2000.0); // SPEED = Steps / second
   stepper_y.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
 //  stepper_y.setSpeed(1000);
   stepper_y.moveTo(128);
   stepper_y.disableOutputs();
 
   // 1 revolution Motor z CW
-  stepper_z.setMaxSpeed(2000.0); // SPEED = Steps / second
+//  stepper_z.setMaxSpeed(2000.0); // SPEED = Steps / second
   stepper_z.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
 //  stepper_z.setSpeed(1000);
   stepper_z.moveTo(128);
   stepper_z.disableOutputs();
 
   // 1 revolution Motor Z CW
-  stepper_Z.setMaxSpeed(2000.0); // SPEED = Steps / second
+//  stepper_Z.setMaxSpeed(2000.0); // SPEED = Steps / second
   stepper_Z.setAcceleration(800.0); // ACCELERATION = Steps / (second)^2
 //  stepper_Z.setSpeed(1000);
   stepper_Z.moveTo(128);
   stepper_Z.disableOutputs();
 
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -138,16 +144,16 @@ void loop()
   continuousRun_Z();
 
 // Rotary encoder
-  if (digitalRead(Encoder_x1) == HIGH)
-  {
-    Serial.println("NC");
-  }
+//  if (digitalRead(Encoder_x1) == HIGH)
+//  {
+//    Serial.println("NC");
+//  }
 //
 //  if (digitalRead(NO))
 //  {
 //    Serial.println(NO);
 //  }
-  delay(1000);
+//  delay(1000);
 
   GoHome();
 }
