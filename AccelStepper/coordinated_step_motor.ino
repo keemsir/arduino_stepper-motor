@@ -1,8 +1,10 @@
 
+// example: constant code b500 500 500 500 400
+
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 
-#include <RotaryEncoder.h>
+//#include <RotaryEncoder.h>
 
 
 // -
@@ -20,17 +22,19 @@
 
 // Rotary Encoder
 
-#define PIN_IN1 7
-#define PIN_IN2 8
-#define PIN_IN3 9
+//#define pA 7
+//#define pB 8
+//#define pZ 9
 
-volatile int PIN_POS = 0;
-volatile boolean PastA = 0;
-volatile boolean PastB = 0;
-volatile boolean PastC = 0;
+int pA = 7;
+int pB = 8;
+int pZ = 9;
+
+volatile signed long cnt = 0;
+volatile signed char dir = 1;
 
 
-RotaryEncoder encoder(PIN_IN1, PIN_IN2, RotaryEncoder::LatchMode::TWO03);
+//RotaryEncoder encoder(PIN_IN1, PIN_IN2, RotaryEncoder::LatchMode::TWO03);
 
 
 
@@ -86,15 +90,16 @@ char movedAxis = '0';
 unsigned long time_x, time_x1, time_y, time_y1, time_z, time_z1, time_Z, time_Z1;
 
 
-
 bool newData, runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false; // booleans for new data from serial, and runallowed flag
 bool run_multistepper = false;
 bool RepeatOperation_x, RepeatOperation_y, RepeatOperation_z, RepeatOperation_Z = false;
 bool Homing_x, Homing_y, Homing_z, Homing_Z = false;
 
+
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
+
 
 void setup() {
   Serial.begin(115200);
@@ -104,21 +109,23 @@ void setup() {
   
   //MotorSpeed = 500; // step per second
   MotorSpeed_Acceleration = 800;
-
+  
   stepper_x.setMaxSpeed(MotorSpeed);
   stepper_y.setMaxSpeed(MotorSpeed);
   stepper_z.setMaxSpeed(MotorSpeed);
   stepper_Z.setMaxSpeed(MotorSpeed);
-
+  
   steppers.addStepper(stepper_x);
   steppers.addStepper(stepper_y);
   steppers.addStepper(stepper_z);
   steppers.addStepper(stepper_Z);
 
+  
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// for acceleration /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
+  
   stepper_x.setAcceleration(MotorSpeed_Acceleration);
   stepper_y.setAcceleration(MotorSpeed_Acceleration);
   stepper_z.setAcceleration(MotorSpeed_Acceleration);
@@ -134,16 +141,10 @@ void setup() {
 //////////////////////////////////// for encoder ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-  pinMode(PIN_IN1, INPUT);
-  pinMode(PIN_IN2, INPUT);
-  pinMode(PIN_IN3, INPUT);
-
-  PastA = (boolean)digitalRead(PIN_IN1);
-  PastB = (boolean)digitalRead(PIN_IN2);
-  PastC = (boolean)digitalRead(PIN_IN3);
-
-  attachInterrupt(0, doEncoderA, RISING);
-  attachInterrupt(1, doEncoderB, CHANGE);
+  attachInterrupt(pA, encoderCount, FALLING);
+  pinMode(pB, INPUT);
+  attachInterrupt(pZ, encoderReset, FALLING);
+  
 }
 
 
@@ -174,8 +175,8 @@ void loop() {
 
   GoHome();
 
-  Serial.println(PIN_POS);
-  delay(200);
+  Serial.print(micros()); Serial.print(',');
+  Serial.println(cnt);
 
 }
 
@@ -184,16 +185,17 @@ void loop() {
 ///////////////////////////////// def setting //////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-void doEncoderA()
+void encoderCount()
 {
-  PastB ? PIN_POS--: PIN_POS++;
+  dir = (digitalRead(pB)==HIGH)? 1:-1;
+  cnt += dir;
 }
 
-void doEncoderB()
-{
-  PastB = !PastB;
-}
 
+void encoderReset()
+{
+  cnt = 0;
+}
 
 
 void checkSerial()
@@ -244,6 +246,7 @@ void checkSerial()
     {
       Serial.println("STOP ");
       run_multistepper = false;
+      
 //      steppers.moveTo(0);
 //      steppers.runSpeedToPosition();
     }
@@ -622,6 +625,7 @@ void continuousRun_const()
 }
 
 
+
 void continuousRun_x()
 {
   if (runallowed_x == true && RepeatOperation_x == true)
@@ -770,6 +774,7 @@ void continuousRun_z()
 }
 
 
+
 void continuousRun_Z()
 {
 
@@ -820,8 +825,6 @@ void continuousRun_Z()
 
 
 
-
-
 void printVIEW()
 {
   Serial.println();
@@ -832,6 +835,7 @@ void updateSelection()
 {
   Serial.println();
 }
+
 
 
 void GoHome() // homing
