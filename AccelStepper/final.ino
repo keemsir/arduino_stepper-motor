@@ -23,12 +23,15 @@
 #define CCW_Z   48
 
 
-/////// for Rotary Encoder ///////
+////////////////// for Rotary Encoder /////////////////
+// | int.0 | int.1 | int.2 | int.3 | int.4 | int.5 | //
+// |   2   |   3   |  21   |  20   |  19   |  18   | //
+///////////////////////////////////////////////////////
 
 
-#define encoder0_PinA 10
-#define encoder0_PinB 11
-#define encoder0_PinZ 12
+#define encoder0_PinA 0
+#define encoder0_PinB 1
+#define encoder0_PinZ 2
 
 volatile signed long cnt0 = 0;
 volatile signed char dir0 = 1;
@@ -45,10 +48,10 @@ volatile signed char dir0 = 1;
 ////////////////////////////////////////////////////////////////////////////////////
 
 // for sample
-// AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
-// AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
-// AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
-// AccelStepper stepper_Z(AccelStepper::FULL4WIRE,14,16,15,17);
+// AccelStepper stepper_x(AccelStepper::FULL4WIRE,4,6,5,7);
+// AccelStepper stepper_y(AccelStepper::FULL4WIRE,8,10,9,11);
+// AccelStepper stepper_z(AccelStepper::FULL4WIRE,12,14,13,15);
+// AccelStepper stepper_Z(AccelStepper::FULL4WIRE,16,18,17,19);
 
 
 // for 4D phantom 
@@ -143,6 +146,7 @@ void setup() {
 //////////////////////////////////// for encoder ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
+
 //  pinMode(encoder0_PinA, INPUT);
 //  pinMode(encoder0_PinB, INPUT);
 //
@@ -151,11 +155,10 @@ void setup() {
 //
 //  attachInterrupt(0, doEncoder_A, RISING);
 //  attachInterrupt(1, doEncoder_B, CHANGE);
-
+//
   attachInterrupt(encoder0_PinA, encoderCount_0, FALLING);
   pinMode(encoder0_PinB, INPUT);
   attachInterrupt(encoder0_PinZ, encoderReset_0, FALLING);
-
 }
 
 
@@ -186,9 +189,16 @@ void loop() {
 
   GoHome();
 
-//  Serial.print(micros());
-//  Serial.print(',');
-//  Serial.println(cnt0);
+//  Serial.println(digitalRead(encoder0_PinA));
+//  Serial.println(digitalRead(encoder0_PinB));
+//  Serial.println(digitalRead(encoder0_PinZ));
+  Serial.print("cnt: ");
+  Serial.println(cnt0);
+  Serial.print(": ");
+  Serial.println();
+  Serial.print("cnt: ");
+  Serial.println();
+//  delay(100);
 
 }
 
