@@ -1,5 +1,7 @@
 
 // example: constant code b500 500 500 500 400
+// serial: b500 500 500 500 500
+// 왜 motor 2에 LED가 전부 안들어오는지 ? 
 
 #include <AccelStepper.h>
 #include <MultiStepper.h>
@@ -20,21 +22,24 @@
 #define CW_Z    46
 #define CCW_Z   48
 
-// Rotary Encoder
 
-//#define pA 7
-//#define pB 8
-//#define pZ 9
-
-int pA = 7;
-int pB = 8;
-int pZ = 9;
-
-volatile signed long cnt = 0;
-volatile signed char dir = 1;
+/////////////////// for Rotary Encoder //////////////////
+/// | int.0 | int.1 | int.2 | int.3 | int.4 | int.5 | ///
+/// |   2   |   3   |  21   |  20   |  19   |  18   | ///
+/////////////////////////////////////////////////////////
 
 
-//RotaryEncoder encoder(PIN_IN1, PIN_IN2, RotaryEncoder::LatchMode::TWO03);
+#define encoder0_PinA 0
+#define encoder0_PinB 1
+#define encoder0_PinZ 2
+
+volatile signed long cnt0 = 0;
+volatile signed char dir0 = 1;
+
+//volatile int encoder0_Pos = 0;
+
+//volatile boolean PastA = 0;
+//volatile boolean PastB = 0;
 
 
 
@@ -42,14 +47,14 @@ volatile signed char dir = 1;
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-// sample code
-AccelStepper stepper_x(AccelStepper::FULL4WIRE,2,4,3,5);
-AccelStepper stepper_y(AccelStepper::FULL4WIRE,6,8,7,9);
-AccelStepper stepper_z(AccelStepper::FULL4WIRE,10,12,11,13);
-AccelStepper stepper_Z(AccelStepper::FULL4WIRE,14,16,15,17);
+// for sample
+AccelStepper stepper_x(AccelStepper::FULL4WIRE,4,6,5,7);
+AccelStepper stepper_y(AccelStepper::FULL4WIRE,8,10,9,11);
+AccelStepper stepper_z(AccelStepper::FULL4WIRE,12,14,13,15);
+AccelStepper stepper_Z(AccelStepper::FULL4WIRE,16,18,17,19);
 
 
-// for 4D phantom 
+// for 4D phantom
 //AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
 //AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
 //AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
@@ -103,7 +108,7 @@ bool Homing_x, Homing_y, Homing_z, Homing_Z = false;
 
 void setup() {
   Serial.begin(115200);
-
+  
   Serial.println("-----Starting Stepper Motor-----");
   Serial.println("input axis: setMaxSpeed, Move"); // !!! 수정필요
   
@@ -120,17 +125,17 @@ void setup() {
   steppers.addStepper(stepper_z);
   steppers.addStepper(stepper_Z);
 
-  
+
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// for acceleration /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-  
+
   stepper_x.setAcceleration(MotorSpeed_Acceleration);
   stepper_y.setAcceleration(MotorSpeed_Acceleration);
   stepper_z.setAcceleration(MotorSpeed_Acceleration);
   stepper_Z.setAcceleration(MotorSpeed_Acceleration);
-  
+
   stepper_x.disableOutputs();
   stepper_y.disableOutputs();
   stepper_z.disableOutputs();
@@ -141,15 +146,25 @@ void setup() {
 //////////////////////////////////// for encoder ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-  attachInterrupt(pA, encoderCount, FALLING);
-  pinMode(pB, INPUT);
-  attachInterrupt(pZ, encoderReset, FALLING);
-  
+
+//  pinMode(encoder0_PinA, INPUT);
+//  pinMode(encoder0_PinB, INPUT);
+//
+//  PastA = (boolean)digitalRead(encoder0_PinA);
+//  PastB = (boolean)digitalRead(encoder0_PinB);
+//
+//  attachInterrupt(0, doEncoder_A, RISING);
+//  attachInterrupt(1, doEncoder_B, CHANGE);
+//
+  attachInterrupt(encoder0_PinA, encoderCount_0, FALLING);
+  pinMode(encoder0_PinB, INPUT);
+  attachInterrupt(encoder0_PinZ, encoderReset_0, FALLING);
+
 }
 
 
 void loop() {
-  
+
 // Checking the serial
   checkSerial();
 
@@ -175,8 +190,16 @@ void loop() {
 
   GoHome();
 
-  Serial.print(micros()); Serial.print(',');
-  Serial.println(cnt);
+//  Serial.println(digitalRead(encoder0_PinA));
+//  Serial.println(digitalRead(encoder0_PinB));
+//  Serial.println(digitalRead(encoder0_PinZ));
+//  Serial.print("cnt: ");
+//  Serial.println(cnt0);
+//  Serial.print(": ");
+//  Serial.println();
+//  Serial.print("cnt: ");
+//  Serial.println();
+//  delay(100);
 
 }
 
@@ -185,17 +208,19 @@ void loop() {
 ///////////////////////////////// def setting //////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-void encoderCount()
+
+void encoderCount_0()
 {
-  dir = (digitalRead(pB)==HIGH)? 1:-1;
-  cnt += dir;
+  dir0 = (digitalRead(encoder0_PinB)==HIGH)? 1:-1;
+  cnt0 += dir0;
 }
 
 
-void encoderReset()
+void encoderReset_0()
 {
-  cnt = 0;
+  cnt0 = 0;
 }
+
 
 
 void checkSerial()
@@ -246,12 +271,13 @@ void checkSerial()
     {
       Serial.println("STOP ");
       run_multistepper = false;
-      
+
 //      steppers.moveTo(0);
 //      steppers.runSpeedToPosition();
+
     }
 
-
+    
     //////////////////////////////////////////////////
     //////////////// Accelator speed /////////////////
     //////////////////////////////////////////////////
@@ -396,10 +422,10 @@ void checkSerial()
       // example c 2000 500 - 2000 steps (5 revolution with 400 step/rev microstepping) and 500 steps/s speed; will rotate in the other direction
       runallowed_z = true;
       RepeatOperation_z = false;
-
+      
       receivedDistance_z = Serial.parseFloat();
       receivedDelay_z = 500;
-
+      
       Serial.print("Distance: ");
       Serial.print(receivedDistance_z);
       Serial.print(", Delay: ");
@@ -591,9 +617,17 @@ void continuousRun_const()
     positions[3] = -receivedDistance_3;
     steppers.moveTo(positions);
     steppers.runSpeedToPosition();
-    delay(50);
     
     time_b = millis();
+    Serial.print("cycle1 time:");
+    Serial.println(time_b - time_a);
+    
+//    Serial.print("local maximum: ");
+//    Serial.println(cnt0);
+    
+    delay(50);
+    
+    time_a = millis();
     
     positions[0] = -receivedDistance_0;
     positions[1] = receivedDistance_1;
@@ -601,12 +635,18 @@ void continuousRun_const()
     positions[3] = receivedDistance_3;
     steppers.moveTo(positions);
     steppers.runSpeedToPosition();
-    delay(50);
-    
-    Serial.println(time_b - time_a);
-  }
 
-  else if (run_multistepper == false)
+    time_b = millis();
+    Serial.print("cycle2 time:");
+    Serial.println(time_b - time_a);
+
+//    Serial.print("local minimum: ");
+//    Serial.println(cnt0);
+    
+    delay(50);
+  }
+  
+  else if (run_multistepper == false && runallowed_x == false && runallowed_y == false && runallowed_z == false && runallowed_Z == false)
   {
     long positions[4];
     
@@ -617,7 +657,7 @@ void continuousRun_const()
     steppers.moveTo(positions);
     steppers.runSpeedToPosition();
   }
-  
+
   else
   {
     return;
@@ -666,7 +706,7 @@ void continuousRun_x()
       stepper_x.disableOutputs();
     }
   }
-  
+
   else // program enters this part if the runallowed is FALSE, we do not do anything
   {
     return;
@@ -816,7 +856,7 @@ void continuousRun_Z()
       stepper_Z.disableOutputs();
     }
   }
-  
+
   else // program enters this part if the runallowed is FALSE, we do not do anything
   {
     return;
@@ -908,3 +948,4 @@ void GoHome() // homing
     }
   }
 }
+
