@@ -2,8 +2,28 @@
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 
+// -
+#define CW_x    22
+#define CCW_x   24
+// +
+#define CW_y    30
+#define CCW_y   32
+// -
+#define CW_z    38
+#define CCW_z   40
+// +
+#define CW_Z    46
+#define CCW_Z   48
+
+
 AccelStepper stepper_x(AccelStepper::FULL4WIRE,4,6,5,7);
 AccelStepper stepper_y(AccelStepper::FULL4WIRE,8,10,9,11);
+
+// for real 4D
+// AccelStepper stepper_x(AccelStepper::DRIVER, CW_x, CCW_x); // CW+: PLS(pulse), CCW+: DIR
+// AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
+// AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
+// AccelStepper stepper_Z(AccelStepper::DRIVER, CW_Z, CCW_Z); // CW+: PLS(pulse), CCW+: DIR
 
 MultiStepper steppers;
 
