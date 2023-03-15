@@ -1,0 +1,418 @@
+---Start---
+1x-motor current position: -648
+y-motor current position: -648
+---Start---
+1x-motor current position: -648
+y-motor current position: -648
+Time is:626, diff:650
+------------------------------------
+1.6x-motor current position: 656
+y-motor current position: 656
+Time is:2748, diff:2750
+------------------------------------
+1.7x-motor current position: -696
+y-motor current position: -696
+Time is:1851, diff:1850
+------------------------------------
+1.6x-motor current position: 592
+y-motor current position: 592
+Time is:2445, diff:2450
+------------------------------------
+1.8x-motor current position: -840
+y-motor current position: -840
+Time is:1549, diff:1550
+------------------------------------
+1.9x-motor current position: 656
+y-motor current position: 656
+Time is:2863, diff:2850
+------------------------------------
+1.6x-motor current position: -632
+y-motor current position: -632
+Time is:1496, diff:1500
+------------------------------------
+1.6x-motor current position: 640
+y-motor current position: 640
+Time is:2048, diff:2050
+------------------------------------
+1.9x-motor current position: -888
+y-motor current position: -888
+Time is:1810, diff:1800
+------------------------------------
+1.9x-motor current position: 640
+y-motor current position: 640
+Time is:2807, diff:2800
+------------------------------------
+1.5x-motor current position: -536
+y-motor current position: -536
+Time is:1196, diff:1200
+------------------------------------
+1.4x-motor current position: 608
+y-motor current position: 608
+Time is:2001, diff:2000
+------------------------------------
+1.8x-motor current position: -824
+y-motor current position: -824
+Time is:1801, diff:1800
+------------------------------------
+1.7x-motor current position: 576
+y-motor current position: 576
+Time is:2440, diff:2450
+------------------------------------
+1.7x-motor current position: -824
+y-motor current position: -824
+Time is:2151, diff:2150
+------------------------------------
+1.8x-motor current position: 624
+y-motor current position: 624
+Time is:2392, diff:2400
+------------------------------------
+1.6x-motor current position: -648
+y-motor current position: -648
+Time is:1456, diff:1450
+------------------------------------
+1.7x-motor current position: 736
+y-motor current position: 736
+Time is:4007, diff:4000
+------------------------------------
+2.0x-motor current position: -856
+y-motor current position: -856
+Time is:1196, diff:1200
+------------------------------------
+2.07x-motor current position: 800
+y-motor current position: 800
+Time is:2603, diff:2600
+------------------------------------
+2.15x-motor current position: -920
+y-motor current position: -920
+Time is:4724, diff:4700
+------------------------------------
+1.9x-motor current position: 592
+y-motor current position: 592
+Time is:2750, diff:2750
+------------------------------------
+1.8x-motor current position: -888
+y-motor current position: -888
+Time is:1396, diff:1400
+------------------------------------
+2.0x-motor current position: 704
+y-motor current position: 704
+Time is:2448, diff:2450
+------------------------------------
+1.9x-motor current position: -824
+y-motor current position: -824
+Time is:1603, diff:1600
+------------------------------------
+1.8x-motor current position: 656
+y-motor current position: 656
+Time is:2193, diff:2200
+------------------------------------
+1.9x-motor current position: -840
+y-motor current position: -840
+Time is:1710, diff:1700
+------------------------------------
+1.9x-motor current position: 672
+y-motor current position: 672
+Time is:2106, diff:2100
+------------------------------------
+1.9x-motor current position: -840
+y-motor current position: -840
+Time is:1499, diff:1500
+------------------------------------
+1.9x-motor current position: 672
+y-motor current position: 672
+Time is:2604, diff:2600
+------------------------------------
+1.8x-motor current position: -792
+y-motor current position: -792
+Time is:2155, diff:2150
+------------------------------------
+1.8x-motor current position: 688
+y-motor current position: 688
+Time is:2908, diff:2900
+------------------------------------
+1.5x-motor current position: -504
+y-motor current position: -504
+Time is:1804, diff:1800
+------------------------------------
+1.4x-motor current position: 592
+y-motor current position: 592
+Time is:1952, diff:1950
+------------------------------------
+1.8x-motor current position: -856
+y-motor current position: -856
+Time is:1909, diff:1900
+------------------------------------
+1.8x-motor current position: 560
+y-motor current position: 560
+Time is:2098, diff:2100
+------------------------------------
+1.8x-motor current position: -856
+y-motor current position: -856
+Time is:2153, diff:2150
+------------------------------------
+2.35x-motor current position: 1024
+y-motor current position: 1024
+Time is:2709, diff:2700
+------------------------------------
+2.25x-motor current position: -776
+y-motor current position: -776
+Time is:2399, diff:2400
+------------------------------------
+2.0x-motor current position: 816
+y-motor current position: 816
+Time is:2199, diff:2200
+------------------------------------
+2.09x-motor current position: -856
+y-motor current position: -856
+Time is:1715, diff:1700
+------------------------------------
+2.15x-motor current position: 864
+y-motor current position: 864
+Time is:2051, diff:2050
+------------------------------------
+1.9x-motor current position: -696
+y-motor current position: -696
+Time is:2057, diff:2050
+------------------------------------
+2.0x-motor current position: 880
+y-motor current position: 880
+Time is:2814, diff:2800
+------------------------------------
+1.8x-motor current position: -600
+y-motor current position: -600
+Time is:1007, diff:1000
+------------------------------------
+1.8x-motor current position: 848
+y-motor current position: 848
+Time is:1751, diff:1750
+------------------------------------
+1.9x-motor current position: -680
+y-motor current position: -680
+Time is:1244, diff:1250
+------------------------------------
+1.9x-motor current position: 832
+y-motor current position: 832
+Time is:2919, diff:2900
+------------------------------------
+2.19x-motor current position: -920
+y-motor current position: -920
+Time is:1707, diff:1700
+------------------------------------
+2.33x-motor current position: 944
+y-motor current position: 944
+Time is:2552, diff:2550
+------------------------------------
+2.19x-motor current position: -808
+y-motor current position: -808
+Time is:1904, diff:1900
+------------------------------------
+2.05x-motor current position: 832
+y-motor current position: 832
+Time is:2152, diff:2150
+------------------------------------
+1.9x-motor current position: -712
+y-motor current position: -712
+Time is:2544, diff:2550
+------------------------------------
+1.9x-motor current position: 784
+y-motor current position: 784
+Time is:1905, diff:1900
+------------------------------------
+2.01x-motor current position: -824
+y-motor current position: -824
+Time is:1905, diff:1900
+------------------------------------
+1.9x-motor current position: 688
+y-motor current position: 688
+Time is:2395, diff:2400
+------------------------------------
+2.05x-motor current position: -952
+y-motor current position: -952
+Time is:2107, diff:2100
+------------------------------------
+2.23x-motor current position: 832
+y-motor current position: 832
+Time is:3167, diff:3150
+------------------------------------
+2.17x-motor current position: -904
+y-motor current position: -904
+Time is:2099, diff:2100
+------------------------------------
+2.03x-motor current position: 720
+y-motor current position: 720
+Time is:2302, diff:2300
+------------------------------------
+1.9x-motor current position: -840
+y-motor current position: -840
+Time is:2204, diff:2200
+------------------------------------
+1.9x-motor current position: 704
+y-motor current position: 704
+Time is:2857, diff:2850
+------------------------------------
+2.09x-motor current position: -968
+y-motor current position: -968
+Time is:1458, diff:1450
+------------------------------------
+2.33x-motor current position: 896
+y-motor current position: 896
+Time is:3749, diff:3750
+------------------------------------
+2.01x-motor current position: -712
+y-motor current position: -712
+Time is:1100, diff:1100
+------------------------------------
+1.8x-motor current position: 752
+y-motor current position: 752
+Time is:2497, diff:2500
+------------------------------------
+2.07x-motor current position: -904
+y-motor current position: -904
+Time is:2108, diff:2100
+------------------------------------
+2.09x-motor current position: 768
+y-motor current position: 768
+Time is:2656, diff:2650
+------------------------------------
+1.9x-motor current position: -744
+y-motor current position: -744
+Time is:1246, diff:1250
+------------------------------------
+1.9x-motor current position: 752
+y-motor current position: 752
+Time is:1905, diff:1900
+------------------------------------
+2.29x-motor current position: -1080
+y-motor current position: -1080
+Time is:2155, diff:2150
+------------------------------------
+2.31x-motor current position: 768
+y-motor current position: 768
+Time is:2648, diff:2650
+------------------------------------
+1.4x-motor current position: -328
+y-motor current position: -328
+Time is:1097, diff:1100
+------------------------------------
+1.1x-motor current position: 560
+y-motor current position: 560
+Time is:1345, diff:1350
+------------------------------------
+1.6x-motor current position: -696
+y-motor current position: -696
+Time is:1043, diff:1050
+------------------------------------
+1.8x-motor current position: 736
+y-motor current position: 736
+Time is:2398, diff:2400
+------------------------------------
+2.07x-motor current position: -920
+y-motor current position: -920
+Time is:1710, diff:1700
+------------------------------------
+2.07x-motor current position: 736
+y-motor current position: 736
+Time is:2108, diff:2100
+------------------------------------
+2.27x-motor current position: -1080
+y-motor current position: -1080
+Time is:2049, diff:2050
+------------------------------------
+2.45x-motor current position: 880
+y-motor current position: 880
+Time is:2967, diff:2950
+------------------------------------
+2.07x-motor current position: -776
+y-motor current position: -776
+Time is:1948, diff:1950
+------------------------------------
+1.9x-motor current position: 768
+y-motor current position: 768
+Time is:1813, diff:1800
+------------------------------------
+2.15x-motor current position: -952
+y-motor current position: -952
+Time is:2051, diff:2050
+------------------------------------
+1x-motor current position: -648
+y-motor current position: -648
+Time is:298, diff:650
+------------------------------------
+1.6x-motor current position: 656
+y-motor current position: 656
+Time is:2748, diff:2750
+------------------------------------
+1.7x-motor current position: -696
+y-motor current position: -696
+Time is:1851, diff:1850
+------------------------------------
+1.6x-motor current position: 592
+y-motor current position: 592
+Time is:2445, diff:2450
+------------------------------------
+1.8x-motor current position: -840
+y-motor current position: -840
+Time is:1548, diff:1550
+------------------------------------
+1.9x-motor current position: 656
+y-motor current position: 656
+Time is:2864, diff:2850
+------------------------------------
+1.6x-motor current position: -632
+y-motor current position: -632
+Time is:1495, diff:1500
+------------------------------------
+1.6x-motor current position: 640
+y-motor current position: 640
+Time is:2048, diff:2050
+------------------------------------
+1.9x-motor current position: -888
+y-motor current position: -888
+Time is:1809, diff:1800
+------------------------------------
+1.9x-motor current position: 640
+y-motor current position: 640
+Time is:2807, diff:2800
+------------------------------------
+1.5x-motor current position: -536
+y-motor current position: -536
+Time is:1196, diff:1200
+------------------------------------
+1.4x-motor current position: 608
+y-motor current position: 608
+Time is:2001, diff:2000
+------------------------------------
+1.8x-motor current position: -824
+y-motor current position: -824
+Time is:1801, diff:1800
+------------------------------------
+1.7x-motor current position: 576
+y-motor current position: 576
+Time is:2440, diff:2450
+------------------------------------
+1.7x-motor current position: -824
+y-motor current position: -824
+Time is:2151, diff:2150
+------------------------------------
+1.8x-motor current position: 624
+y-motor current position: 624
+Time is:2392, diff:2400
+------------------------------------
+1.6x-motor current position: -648
+y-motor current position: -648
+Time is:1455, diff:1450
+------------------------------------
+1.7x-motor current position: 736
+y-motor current position: 736
+Time is:4006, diff:4000
+------------------------------------
+2.0x-motor current position: -856
+y-motor current position: -856
+Time is:1196, diff:1200
+------------------------------------
+2.07x-motor current position: 800
+y-motor current position: 800
+Time is:2603, diff:2600
+------------------------------------
+2.15x-motor current position: -920
+y-motor current position: -920
