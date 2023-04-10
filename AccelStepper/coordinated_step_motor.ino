@@ -1,4 +1,6 @@
 
+// 20230410 update
+
 // example: constant code b500 500 500 500 400
 // serial: b500 500 500 500 500
 // 왜 motor 2에 LED가 전부 안들어오는지 ? 
@@ -6,8 +8,8 @@
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 
-//#include <RotaryEncoder.h>
 
+//#include <RotaryEncoder.h>
 
 // -
 #define CW_x    22
@@ -28,18 +30,34 @@
 /// |   2   |   3   |  21   |  20   |  19   |  18   | ///
 /////////////////////////////////////////////////////////
 
+#define encoderx_PinA 2
+#define encoderx_PinB 3
 
-#define encoder0_PinA 0
-#define encoder0_PinB 1
-#define encoder0_PinZ 2
+#define encodery_PinA 20
+#define encodery_PinB 21
 
-volatile signed long cnt0 = 0;
-volatile signed char dir0 = 1;
+#define encoderz_PinA 18
+#define encoderz_PinB 19
 
-//volatile int encoder0_Pos = 0;
+#define encoderZ_PinA 18
+#define encoderZ_PinB 19
 
-//volatile boolean PastA = 0;
-//volatile boolean PastB = 0;
+
+volatile long encoderx_Pos = 0;
+volatile boolean encoderx_Aset = false;
+volatile boolean encoderx_Bset = false;
+
+volatile long encodery_Pos = 0;
+volatile boolean encodery_Aset = false;
+volatile boolean encodery_Bset = false;
+
+volatile long encoderz_Pos = 0;
+volatile boolean encoderz_Aset = false;
+volatile boolean encoderz_Bset = false;
+
+volatile long encoderZ_Pos = 0;
+volatile boolean encoderZ_Aset = false;
+volatile boolean encoderZ_Bset = false;
 
 
 
@@ -47,11 +65,12 @@ volatile signed char dir0 = 1;
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-// for sample
+
 AccelStepper stepper_x(AccelStepper::FULL4WIRE,4,6,5,7);
 AccelStepper stepper_y(AccelStepper::FULL4WIRE,8,10,9,11);
 AccelStepper stepper_z(AccelStepper::FULL4WIRE,12,14,13,15);
 AccelStepper stepper_Z(AccelStepper::FULL4WIRE,16,18,17,19);
+
 
 
 // for 4D phantom
@@ -59,6 +78,7 @@ AccelStepper stepper_Z(AccelStepper::FULL4WIRE,16,18,17,19);
 //AccelStepper stepper_y(AccelStepper::DRIVER, CW_y, CCW_y); // CW+: PLS(pulse), CCW+: DIR
 //AccelStepper stepper_z(AccelStepper::DRIVER, CW_z, CCW_z); // CW+: PLS(pulse), CCW+: DIR
 //AccelStepper stepper_Z(AccelStepper::DRIVER, CW_Z, CCW_Z); // CW+: PLS(pulse), CCW+: DIR
+
 
 
 MultiStepper steppers;
@@ -95,15 +115,18 @@ char movedAxis = '0';
 unsigned long time_x, time_x1, time_y, time_y1, time_z, time_z1, time_Z, time_Z1;
 
 
+
 bool newData, runallowed_x, runallowed_y, runallowed_z, runallowed_Z = false; // booleans for new data from serial, and runallowed flag
 bool run_multistepper = false;
 bool RepeatOperation_x, RepeatOperation_y, RepeatOperation_z, RepeatOperation_Z = false;
 bool Homing_x, Homing_y, Homing_z, Homing_Z = false;
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
+
 
 
 void setup() {
@@ -124,8 +147,8 @@ void setup() {
   steppers.addStepper(stepper_y);
   steppers.addStepper(stepper_z);
   steppers.addStepper(stepper_Z);
-
-
+  
+  
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// for acceleration /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +158,7 @@ void setup() {
   stepper_y.setAcceleration(MotorSpeed_Acceleration);
   stepper_z.setAcceleration(MotorSpeed_Acceleration);
   stepper_Z.setAcceleration(MotorSpeed_Acceleration);
-
+  
   stepper_x.disableOutputs();
   stepper_y.disableOutputs();
   stepper_z.disableOutputs();
@@ -146,21 +169,31 @@ void setup() {
 //////////////////////////////////// for encoder ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
+  pinMode(encoderx_PinA, INPUT_PULLUP);
+  pinMode(encoderx_PinB, INPUT_PULLUP);
+  pinMode(encodery_PinA, INPUT_PULLUP);
+  pinMode(encodery_PinB, INPUT_PULLUP);
+  pinMode(encoderz_PinA, INPUT_PULLUP);
+  pinMode(encoderz_PinB, INPUT_PULLUP);
+  pinMode(encoderZ_PinA, INPUT_PULLUP);
+  pinMode(encoderZ_PinB, INPUT_PULLUP);
 
-//  pinMode(encoder0_PinA, INPUT);
-//  pinMode(encoder0_PinB, INPUT);
-//
+  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), updateEncoderx, CHANGE); //encoderx_PinA
+  attachInterrupt(digitalPinToInterrupt(encodery_PinA), updateEncodery, CHANGE); //encodery_PinA
+  attachInterrupt(digitalPinToInterrupt(encoderz_PinA), updateEncoderz, CHANGE); //encoderz_PinA
+  attachInterrupt(digitalPinToInterrupt(encoderZ_PinA), updateEncoderZ, CHANGE); //encoderZ_PinA
+
 //  PastA = (boolean)digitalRead(encoder0_PinA);
 //  PastB = (boolean)digitalRead(encoder0_PinB);
 //
 //  attachInterrupt(0, doEncoder_A, RISING);
 //  attachInterrupt(1, doEncoder_B, CHANGE);
-//
-  attachInterrupt(encoder0_PinA, encoderCount_0, FALLING);
-  pinMode(encoder0_PinB, INPUT);
-  attachInterrupt(encoder0_PinZ, encoderReset_0, FALLING);
 
+//  attachInterrupt(encoder0_PinA, encoderCount_0, FALLING);
+//  pinMode(encoder0_PinB, INPUT);
+//  attachInterrupt(encoder0_PinZ, encoderReset_0, FALLING);
 }
+
 
 
 void loop() {
@@ -170,7 +203,7 @@ void loop() {
 
 // Runing the stepper motor (x,y,z,Z axis)
   continuousRun_const();
-
+  
   continuousRun_x();
   continuousRun_y();
   continuousRun_z();
@@ -187,9 +220,9 @@ void loop() {
 //    Serial.println(NO);
 //  }
 //  delay(1000);
-
+  
   GoHome();
-
+  
 //  Serial.println(digitalRead(encoder0_PinA));
 //  Serial.println(digitalRead(encoder0_PinB));
 //  Serial.println(digitalRead(encoder0_PinZ));
@@ -207,19 +240,6 @@ void loop() {
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// def setting //////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-
-
-void encoderCount_0()
-{
-  dir0 = (digitalRead(encoder0_PinB)==HIGH)? 1:-1;
-  cnt0 += dir0;
-}
-
-
-void encoderReset_0()
-{
-  cnt0 = 0;
-}
 
 
 
@@ -568,6 +588,7 @@ void checkSerial()
     {
       Homing_x = true;
       Serial.println("Homing the x-axis motor");
+      stepper_x.disableOutputs();
     }
 
     // Homing the stepper motor y-axis
@@ -575,6 +596,7 @@ void checkSerial()
     {
       Homing_y = true;
       Serial.println("Homing the y-axis motor");
+      stepper_y.disableOutputs();
     }
 
     // Homing the stepper motor z-axis
@@ -582,6 +604,7 @@ void checkSerial()
     {
       Homing_z = true;
       Serial.println("Homing the z-axis motor");
+      stepper_z.disableOutputs();
     }
 
     // Homing the stepper motor Z-axis
@@ -589,6 +612,7 @@ void checkSerial()
     {
       Homing_Z = true;
       Serial.println("Homing the Z-axis motor");
+      stepper_Z.disableOutputs();
     }
 
   }
@@ -897,6 +921,7 @@ void GoHome() // homing
     }
   }
 
+
   if (Homing_y == true)
   {
     if (stepper_y.currentPosition() == 0 && Homing_y == true)
@@ -913,6 +938,8 @@ void GoHome() // homing
       stepper_y.run();
     }
   }
+
+
 
   if (Homing_z == true)
   {
@@ -931,6 +958,7 @@ void GoHome() // homing
     }
   }
 
+
   if (Homing_Z == true)
   {
     if (stepper_Z.currentPosition() == 0 && Homing_Z == true)
@@ -948,4 +976,144 @@ void GoHome() // homing
     }
   }
 }
+
+
+
+void updateEncoderx()
+{
+  // Read encoder inputs
+  boolean x_aVal = digitalRead(encoderx_PinA);
+  boolean x_bVal = digitalRead(encoderx_PinB);
+
+  // Determine which encoder output has changed
+  if (x_aVal != encoderx_Aset)
+  {
+    encoderx_Aset = x_aVal;
+    if (!x_aVal && !x_bVal)
+    {
+      encoderx_Pos++;
+    }
+    else if (!x_aVal && x_bVal)
+    {
+      encoderx_Pos--;
+    }
+  }
+  else if (x_bVal != encoderx_Bset)
+  {
+    encoderx_Bset = x_bVal;
+    if (x_aVal && !x_bVal)
+    {
+      encoderx_Pos++;
+    }
+    else if (x_aVal && x_bVal)
+    {
+      encoderx_Pos--;
+    }
+  }
+}
+
+
+
+void updateEncodery()
+{
+  // Read encoder inputs
+  boolean y_aVal = digitalRead(encodery_PinA);
+  boolean y_bVal = digitalRead(encodery_PinB);
+
+  // Determine which encoder output has changed
+  if (y_aVal != encodery_Aset)
+  {
+    encodery_Aset = y_aVal;
+    if (!y_aVal && !y_bVal)
+    {
+      encodery_Pos++;
+    }
+    else if (!y_aVal && y_bVal)
+    {
+      encodery_Pos--;
+    }
+  }
+  else if (y_bVal != encodery_Bset)
+  {
+    encodery_Bset = y_bVal;
+    if (y_aVal && !y_bVal)
+    {
+      encodery_Pos++;
+    }
+    else if (y_aVal && y_bVal)
+    {
+      encodery_Pos--;
+    }
+  }
+}
+
+
+
+void updateEncoderz()
+{
+  // Read encoder inputs
+  boolean z_aVal = digitalRead(encoderz_PinA);
+  boolean z_bVal = digitalRead(encoderz_PinB);
+
+  // Determine which encoder output has changed
+  if (z_aVal != encoderz_Aset)
+  {
+    encoderz_Aset = z_aVal;
+    if (!z_aVal && !z_bVal)
+    {
+      encoderz_Pos++;
+    }
+    else if (!z_aVal && z_bVal)
+    {
+      encoderz_Pos--;
+    }
+  }
+  else if (z_bVal != encoderz_Bset)
+  {
+    encoderz_Bset = z_bVal;
+    if (z_aVal && !z_bVal)
+    {
+      encoderz_Pos++;
+    }
+    else if (z_aVal && z_bVal)
+    {
+      encoderz_Pos--;
+    }
+  }
+}
+
+
+void updateEncoderZ()
+{
+  // Read encoder inputs
+  boolean Z_aVal = digitalRead(encoderZ_PinA);
+  boolean Z_bVal = digitalRead(encoderZ_PinB);
+
+  // Determine which encoder output has changed
+  if (Z_aVal != encoderZ_Aset)
+  {
+    encoderZ_Aset = Z_aVal;
+    if (!Z_aVal && !Z_bVal)
+    {
+      encoderZ_Pos++;
+    }
+    else if (!Z_aVal && Z_bVal)
+    {
+      encoderZ_Pos--;
+    }
+  }
+  else if (Z_bVal != encoderZ_Bset)
+  {
+    encoderZ_Bset = Z_bVal;
+    if (Z_aVal && !Z_bVal)
+    {
+      encoderZ_Pos++;
+    }
+    else if (Z_aVal && Z_bVal)
+    {
+      encoderZ_Pos--;
+    }
+  }
+}
+
 
