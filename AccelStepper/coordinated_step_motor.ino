@@ -30,6 +30,19 @@
 /// |   2   |   3   |  21   |  20   |  19   |  18   | ///
 /////////////////////////////////////////////////////////
 
+
+int A[3][84] = {{-81, 82, -87, 74, -105, 82, -79, 80, -111, 80, -67, 76, -103, 72, -103, 78, -81, 92, -107, 100, -115, 74, -111, 88, -103, 82, -105, 84, -105, 84, -99, 86, -63, 74, -107, 70, -107, 128, -97, 102, -107, 108, -87, 110, -75, 106, -85, 104, -115, 118, -101, 104, -89, 98, -103, 86, -119, 104, -113, 90, -105, 88, -121, 112, -89, 94, -113, 96, -93, 94, -135, 96, -41, 70, -87, 92, -115, 92, -135, 110, -97, 96, -119, 16},
+{650, 2750, 1850, 2450, 1550, 2850, 1500, 2050, 1800, 2800, 1200, 2000, 1800, 2450, 2150, 2400, 1450, 4000, 1200, 2600, 4700, 2750, 1400, 2450, 1600, 2200, 1700, 2100, 1500, 2600, 2150, 2900, 1800, 1950, 1900, 2100, 2150, 2700, 2400, 2200, 1700, 2050, 2050, 2800, 1000, 1750, 1250, 2900, 1700, 2550, 1900, 2150, 2550, 1900, 1900, 2400, 2100, 3150, 2100, 2300, 2200, 2850, 1450, 3750, 1100, 2500, 2100, 2650, 1250, 1900, 2150, 2650, 1100, 1350, 1050, 2400, 1700, 2100, 2050, 2950, 1950, 1800, 2050, 1150},
+{1283, 292, 434, 329, 520, 281, 538, 392, 446, 286, 676, 402, 446, 329, 374, 336, 557, 200, 676, 309, 170, 292, 577, 329, 503, 366, 472, 383, 538, 309, 374, 276, 446, 412, 423, 383, 374, 297, 336, 366, 472, 392, 392, 286, 812, 459, 649, 276, 472, 316, 423, 374, 316, 423, 423, 336, 383, 254, 383, 350, 366, 281, 557, 214, 738, 322, 383, 303, 649, 423, 374, 303, 738, 600, 773, 336, 472, 383, 392, 271, 412, 446, 392, 706}};
+
+int B[3][84] = {{-81, 82, -87, 74, -105, 82, -79, 80, -111, 80, -67, 76, -103, 72, -103, 78, -81, 92, -107, 100, -115, 74, -111, 88, -103, 82, -105, 84, -105, 84, -99, 86, -63, 74, -107, 70, -107, 128, -97, 102, -107, 108, -87, 110, -75, 106, -85, 104, -115, 118, -101, 104, -89, 98, -103, 86, -119, 104, -113, 90, -105, 88, -121, 112, -89, 94, -113, 96, -93, 94, -135, 96, -41, 70, -87, 92, -115, 92, -135, 110, -97, 96, -119, 16},
+{650, 2750, 1850, 2450, 1550, 2850, 1500, 2050, 1800, 2800, 1200, 2000, 1800, 2450, 2150, 2400, 1450, 4000, 1200, 2600, 4700, 2750, 1400, 2450, 1600, 2200, 1700, 2100, 1500, 2600, 2150, 2900, 1800, 1950, 1900, 2100, 2150, 2700, 2400, 2200, 1700, 2050, 2050, 2800, 1000, 1750, 1250, 2900, 1700, 2550, 1900, 2150, 2550, 1900, 1900, 2400, 2100, 3150, 2100, 2300, 2200, 2850, 1450, 3750, 1100, 2500, 2100, 2650, 1250, 1900, 2150, 2650, 1100, 1350, 1050, 2400, 1700, 2100, 2050, 2950, 1950, 1800, 2050, 1150},
+{1283, 292, 434, 329, 520, 281, 538, 392, 446, 286, 676, 402, 446, 329, 374, 336, 557, 200, 676, 309, 170, 292, 577, 329, 503, 366, 472, 383, 538, 309, 374, 276, 446, 412, 423, 383, 374, 297, 336, 366, 472, 392, 392, 286, 812, 459, 649, 276, 472, 316, 423, 374, 316, 423, 423, 336, 383, 254, 383, 350, 366, 281, 557, 214, 738, 322, 383, 303, 649, 423, 374, 303, 738, 600, 773, 336, 472, 383, 392, 271, 412, 446, 392, 706}};
+
+float Speed_weight_x = 0.1;
+float Speed_weight_y = 0.1;
+
+
 #define encoderx_PinA 2
 #define encoderx_PinB 3
 
@@ -179,6 +192,7 @@ void setup() {
   pinMode(encoderZ_PinB, INPUT_PULLUP);
 
   attachInterrupt(digitalPinToInterrupt(encoderx_PinA), updateEncoderx, CHANGE); //encoderx_PinA
+  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), updateEncoderx, CHANGE); //encoderx_PinA
   attachInterrupt(digitalPinToInterrupt(encodery_PinA), updateEncodery, CHANGE); //encodery_PinA
   attachInterrupt(digitalPinToInterrupt(encoderz_PinA), updateEncoderz, CHANGE); //encoderz_PinA
   attachInterrupt(digitalPinToInterrupt(encoderZ_PinA), updateEncoderZ, CHANGE); //encoderZ_PinA
@@ -222,7 +236,7 @@ void loop() {
 //  delay(1000);
   
   GoHome();
-  
+
 //  Serial.println(digitalRead(encoder0_PinA));
 //  Serial.println(digitalRead(encoder0_PinB));
 //  Serial.println(digitalRead(encoder0_PinZ));
@@ -235,6 +249,7 @@ void loop() {
 //  delay(100);
 
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -621,6 +636,7 @@ void checkSerial()
 }
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -689,6 +705,70 @@ void continuousRun_const()
 }
 
 
+void constance_for()
+{
+  for(int i=0; i<84-1; i++)
+  {
+    long positions[2];
+    
+    positions[0] = A[0][i]*8; // A[0][i-1] 8: Distance_weight_x
+    positions[1] = B[0][i]*8; // 8: Distance_weight_y
+
+
+    if (i == 0)
+    {
+      Speed_weight_x = abs(A[0][i]*0.08);
+      Speed_weight_y = abs(B[0][i]*0.08);
+      Serial.print(Speed_weight_x, Speed_weight_y);
+    }
+    else
+    {
+      Speed_weight_x = abs(A[0][i] - A[0][i-1])*0.08;
+      Speed_weight_y = abs(B[0][i] - B[0][i-1])*0.08;
+      Serial.print(Speed_weight_x, Speed_weight_y);
+    }
+    
+    
+    stepper_x.setMaxSpeed(A[2][i]*Speed_weight_x);
+    stepper_y.setMaxSpeed(B[2][i]*Speed_weight_y);
+    
+    time_a = millis();
+    
+    Serial.print("x-motor current position: ");
+    Serial.println(positions[0]);
+    
+    
+    Serial.print("y-motor current position: ");
+    Serial.println(positions[1]);
+    
+    steppers.moveTo(positions);
+    
+    steppers.runSpeedToPosition();
+    
+    time_b = millis();
+    
+//    delay(50);
+    Serial.print("Time is(output):");
+    Serial.print(time_b - time_a);
+    Serial.print(", Ground Truth:");
+    Serial.print(A[1][i]);
+    Serial.print(", diff:");
+    Serial.println(time_b - time_a - A[1][i]);
+    
+//    Serial.println(encoderPos);
+//    Serial.print("A:");
+//    Serial.println(digitalRead(encoderA));
+//    Serial.print("B:");
+//    Serial.println(digitalRead(encoderB));
+//    Serial.print("Z:");
+//    Serial.println(digitalRead(encoderZ));
+    Serial.println();
+    
+    Serial.println("------------------------------------");
+  }
+}
+
+
 
 void continuousRun_x()
 {
@@ -705,12 +785,16 @@ void continuousRun_x()
         time_x = millis();
         Serial.print("time(x): ");
         Serial.println(time_x-time_x1);
+        Serial.print("Position encoder(x): ");
+        Serial.println(encoderx_Pos);
       }
       else if (stepper_x.currentPosition() == -receivedDistance_x)
       {
         time_x1 = millis();
         Serial.print("time(x): ");
         Serial.println(time_x1-time_x);
+        Serial.print("Position encoder(x): ");
+        Serial.println(encoderx_Pos);
       }
     }
     stepper_x.enableOutputs();
@@ -1081,6 +1165,7 @@ void updateEncoderz()
     }
   }
 }
+
 
 
 void updateEncoderZ()

@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "sketch": "AccelStepper\\coordinated_step_motor.ino",
+    "programmer": "avrispmkii"
+}
