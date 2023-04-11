@@ -191,11 +191,15 @@ void setup() {
   pinMode(encoderZ_PinA, INPUT_PULLUP);
   pinMode(encoderZ_PinB, INPUT_PULLUP);
 
-  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), updateEncoderx, CHANGE); //encoderx_PinA
-  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), updateEncoderx, CHANGE); //encoderx_PinA
-  attachInterrupt(digitalPinToInterrupt(encodery_PinA), updateEncodery, CHANGE); //encodery_PinA
-  attachInterrupt(digitalPinToInterrupt(encoderz_PinA), updateEncoderz, CHANGE); //encoderz_PinA
-  attachInterrupt(digitalPinToInterrupt(encoderZ_PinA), updateEncoderZ, CHANGE); //encoderZ_PinA
+//  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), updateEncoderx, CHANGE); //encoderx_PinA
+//  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), updateEncoderx, CHANGE); //encoderx_PinB
+
+  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), doEncoderA, CHANGE); //encoderx_PinA
+  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), doEncoderB, CHANGE); //encoderx_PinB
+  
+//  attachInterrupt(digitalPinToInterrupt(encodery_PinA), updateEncodery, CHANGE); //encodery_PinA
+//  attachInterrupt(digitalPinToInterrupt(encoderz_PinA), updateEncoderz, CHANGE); //encoderz_PinA
+//  attachInterrupt(digitalPinToInterrupt(encoderZ_PinA), updateEncoderZ, CHANGE); //encoderZ_PinA
 
 //  PastA = (boolean)digitalRead(encoder0_PinA);
 //  PastB = (boolean)digitalRead(encoder0_PinB);
@@ -237,9 +241,9 @@ void loop() {
   
   GoHome();
 
-//  Serial.println(digitalRead(encoder0_PinA));
-//  Serial.println(digitalRead(encoder0_PinB));
-//  Serial.println(digitalRead(encoder0_PinZ));
+//  Serial.println(digitalRead(encoderx_PinA));
+//  Serial.println(digitalRead(encoderx_PinB));
+//  Serial.println(encoderx_Pos);
 //  Serial.print("cnt: ");
 //  Serial.println(cnt0);
 //  Serial.print(": ");
@@ -558,7 +562,7 @@ void checkSerial()
 //      stepper_x.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_x.stop();
-      stepper_x.disableOutputs();
+//      stepper_x.disableOutputs();
     }
 
     // STOP the stepper motor
@@ -570,7 +574,7 @@ void checkSerial()
 //      stepper_y.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_y.stop();
-      stepper_y.disableOutputs();
+//      stepper_y.disableOutputs();
     }
 
     // STOP the stepper motor
@@ -582,7 +586,7 @@ void checkSerial()
 //      stepper_z.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_z.stop();
-      stepper_z.disableOutputs();
+//      stepper_z.disableOutputs();
     }
 
     // STOP the stepper motor
@@ -594,7 +598,7 @@ void checkSerial()
 //      stepper_Z.setCurrentPosition(0);
       Serial.println("STOP ");
       stepper_Z.stop();
-      stepper_Z.disableOutputs();
+//      stepper_Z.disableOutputs();
     }
 
 
@@ -1068,6 +1072,8 @@ void updateEncoderx()
   // Read encoder inputs
   boolean x_aVal = digitalRead(encoderx_PinA);
   boolean x_bVal = digitalRead(encoderx_PinB);
+//  Serial.println(x_aVal);
+//  Serial.println(x_bVal);
 
   // Determine which encoder output has changed
   if (x_aVal != encoderx_Aset)
@@ -1094,6 +1100,7 @@ void updateEncoderx()
       encoderx_Pos--;
     }
   }
+  Serial.println(encoderx_Pos);
 }
 
 
@@ -1201,4 +1208,54 @@ void updateEncoderZ()
   }
 }
 
+
+
+void doEncoderA(){
+  // look for a low-to-high on channel A
+  if (digitalRead(encoderx_PinA) == HIGH) {
+    // check channel B to see which way encoder is turning
+    if (digitalRead(encoderx_PinB) == LOW) {
+      encoderx_Pos = encoderx_Pos + 1;
+    }
+    else {
+      encoderx_Pos = encoderx_Pos - 1;
+    }
+  }
+  else   // must be a high-to-low edge on channel A
+  {
+    // check channel B to see which way encoder is turning
+    if (digitalRead(encoderx_PinB) == HIGH) {
+      encoderx_Pos = encoderx_Pos + 1;
+    }
+    else {
+      encoderx_Pos = encoderx_Pos - 1;
+    }
+  }
+  Serial.println (encoderx_Pos);
+}
+
+
+void doEncoderB(){
+  // look for a low-to-high on channel B
+  if (digitalRead(encoderx_PinB) == HIGH) {
+   // check channel A to see which way encoder is turning
+    if (digitalRead(encoderx_PinA) == HIGH) {
+      encoderx_Pos = encoderx_Pos + 1;
+    }
+    else {
+      encoderx_Pos = encoderx_Pos - 1;
+    }
+  }
+  // Look for a high-to-low on channel B
+  else {
+    // check channel B to see which way encoder is turning
+    if (digitalRead(encoderx_PinA) == LOW) {
+      encoderx_Pos = encoderx_Pos + 1;
+    }
+    else {
+      encoderx_Pos = encoderx_Pos - 1;
+    }
+  }
+  Serial.println (encoderx_Pos);
+}
 
