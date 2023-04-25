@@ -1,4 +1,5 @@
 
+
 // 20230410 update
 
 // example: constant code b500 500 500 500 400
@@ -43,11 +44,12 @@ float Speed_weight_x = 0.1;
 float Speed_weight_y = 0.1;
 
 
-#define encoderx_PinA 2
-#define encoderx_PinB 3
+#define encoderx_PinA 20
+#define encoderx_PinB 21
+#define encoderx_PinZ 4
 
-#define encodery_PinA 20
-#define encodery_PinB 21
+#define encodery_PinA 2
+#define encodery_PinB 3
 
 #define encoderz_PinA 18
 #define encoderz_PinB 19
@@ -79,7 +81,7 @@ volatile boolean encoderZ_Bset = false;
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-AccelStepper stepper_x(AccelStepper::FULL4WIRE,4,6,5,7);
+AccelStepper stepper_x(AccelStepper::FULL4WIRE,5,6,5,7);
 AccelStepper stepper_y(AccelStepper::FULL4WIRE,8,10,9,11);
 AccelStepper stepper_z(AccelStepper::FULL4WIRE,12,14,13,15);
 AccelStepper stepper_Z(AccelStepper::FULL4WIRE,16,18,17,19);
@@ -184,6 +186,7 @@ void setup() {
 
   pinMode(encoderx_PinA, INPUT_PULLUP);
   pinMode(encoderx_PinB, INPUT_PULLUP);
+//  pinMode(encoderx_PinZ, INPUT_PULLUP);
   pinMode(encodery_PinA, INPUT_PULLUP);
   pinMode(encodery_PinB, INPUT_PULLUP);
   pinMode(encoderz_PinA, INPUT_PULLUP);
@@ -191,25 +194,24 @@ void setup() {
   pinMode(encoderZ_PinA, INPUT_PULLUP);
   pinMode(encoderZ_PinB, INPUT_PULLUP);
 
-//  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), updateEncoderx, CHANGE); //encoderx_PinA
-//  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), updateEncoderx, CHANGE); //encoderx_PinB
 
-  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), doEncoderA, CHANGE); //encoderx_PinA
-  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), doEncoderB, CHANGE); //encoderx_PinB
+//  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), updateEncoderx, RISING); //encoderx_PinA
+//  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), updateEncoderx, RISING); //encoderx_PinB
+
+//  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), doEncoderA, RISING); //encoderx_PinA
+//  attachInterrupt(digitalPinToInterrupt(encoderx_PinB), doEncoderB, RISING); //encoderx_PinB
+
+//  attachInterrupt(digitalPinToInterrupt(encoderx_PinA), updateEncoderx, RISING); //encoderx_PinA
   
-//  attachInterrupt(digitalPinToInterrupt(encodery_PinA), updateEncodery, CHANGE); //encodery_PinA
-//  attachInterrupt(digitalPinToInterrupt(encoderz_PinA), updateEncoderz, CHANGE); //encoderz_PinA
-//  attachInterrupt(digitalPinToInterrupt(encoderZ_PinA), updateEncoderZ, CHANGE); //encoderZ_PinA
+  attachInterrupt(digitalPinToInterrupt(encodery_PinA), Encoder_y_CW, RISING); //encodery_PinA
+  attachInterrupt(digitalPinToInterrupt(encodery_PinB), Encoder_y_CCW, RISING); //encodery_PinB
+  
+//  attachInterrupt(digitalPinToInterrupt(encoderz_PinA), updateEncoderz, RISING); //encoderz_PinA
+//  attachInterrupt(digitalPinToInterrupt(encoderZ_PinA), updateEncoderZ, RISING); //encoderZ_PinA
 
 //  PastA = (boolean)digitalRead(encoder0_PinA);
 //  PastB = (boolean)digitalRead(encoder0_PinB);
-//
-//  attachInterrupt(0, doEncoder_A, RISING);
-//  attachInterrupt(1, doEncoder_B, CHANGE);
 
-//  attachInterrupt(encoder0_PinA, encoderCount_0, FALLING);
-//  pinMode(encoder0_PinB, INPUT);
-//  attachInterrupt(encoder0_PinZ, encoderReset_0, FALLING);
 }
 
 
@@ -240,6 +242,11 @@ void loop() {
 //  delay(1000);
   
   GoHome();
+  
+//  Serial.print("PinA: ");
+//  Serial.println(digitalRead(encoderx_PinA));
+//  Serial.print("PinB: ");
+//  Serial.println(digitalRead(encoderx_PinA));
 
 //  Serial.println(digitalRead(encoderx_PinA));
 //  Serial.println(digitalRead(encoderx_PinB));
@@ -434,7 +441,7 @@ void checkSerial()
       stepper_y.move(-1 * receivedDistance_y);
       stepper_y.setMaxSpeed(receivedDelay_y);
     }
-    
+
 
     // motor 3 moving
     if (receivedCommand == 'c') //this is the measure part
@@ -1066,155 +1073,11 @@ void GoHome() // homing
 }
 
 
-
-void updateEncoderx()
-{
-  // Read encoder inputs
-  boolean x_aVal = digitalRead(encoderx_PinA);
-  boolean x_bVal = digitalRead(encoderx_PinB);
-//  Serial.println(x_aVal);
-//  Serial.println(x_bVal);
-
-  // Determine which encoder output has changed
-  if (x_aVal != encoderx_Aset)
-  {
-    encoderx_Aset = x_aVal;
-    if (!x_aVal && !x_bVal)
-    {
-      encoderx_Pos++;
-    }
-    else if (!x_aVal && x_bVal)
-    {
-      encoderx_Pos--;
-    }
-  }
-  else if (x_bVal != encoderx_Bset)
-  {
-    encoderx_Bset = x_bVal;
-    if (x_aVal && !x_bVal)
-    {
-      encoderx_Pos++;
-    }
-    else if (x_aVal && x_bVal)
-    {
-      encoderx_Pos--;
-    }
-  }
-  Serial.println(encoderx_Pos);
-}
-
-
-
-void updateEncodery()
-{
-  // Read encoder inputs
-  boolean y_aVal = digitalRead(encodery_PinA);
-  boolean y_bVal = digitalRead(encodery_PinB);
-
-  // Determine which encoder output has changed
-  if (y_aVal != encodery_Aset)
-  {
-    encodery_Aset = y_aVal;
-    if (!y_aVal && !y_bVal)
-    {
-      encodery_Pos++;
-    }
-    else if (!y_aVal && y_bVal)
-    {
-      encodery_Pos--;
-    }
-  }
-  else if (y_bVal != encodery_Bset)
-  {
-    encodery_Bset = y_bVal;
-    if (y_aVal && !y_bVal)
-    {
-      encodery_Pos++;
-    }
-    else if (y_aVal && y_bVal)
-    {
-      encodery_Pos--;
-    }
-  }
-}
-
-
-
-void updateEncoderz()
-{
-  // Read encoder inputs
-  boolean z_aVal = digitalRead(encoderz_PinA);
-  boolean z_bVal = digitalRead(encoderz_PinB);
-
-  // Determine which encoder output has changed
-  if (z_aVal != encoderz_Aset)
-  {
-    encoderz_Aset = z_aVal;
-    if (!z_aVal && !z_bVal)
-    {
-      encoderz_Pos++;
-    }
-    else if (!z_aVal && z_bVal)
-    {
-      encoderz_Pos--;
-    }
-  }
-  else if (z_bVal != encoderz_Bset)
-  {
-    encoderz_Bset = z_bVal;
-    if (z_aVal && !z_bVal)
-    {
-      encoderz_Pos++;
-    }
-    else if (z_aVal && z_bVal)
-    {
-      encoderz_Pos--;
-    }
-  }
-}
-
-
-
-void updateEncoderZ()
-{
-  // Read encoder inputs
-  boolean Z_aVal = digitalRead(encoderZ_PinA);
-  boolean Z_bVal = digitalRead(encoderZ_PinB);
-
-  // Determine which encoder output has changed
-  if (Z_aVal != encoderZ_Aset)
-  {
-    encoderZ_Aset = Z_aVal;
-    if (!Z_aVal && !Z_bVal)
-    {
-      encoderZ_Pos++;
-    }
-    else if (!Z_aVal && Z_bVal)
-    {
-      encoderZ_Pos--;
-    }
-  }
-  else if (Z_bVal != encoderZ_Bset)
-  {
-    encoderZ_Bset = Z_bVal;
-    if (Z_aVal && !Z_bVal)
-    {
-      encoderZ_Pos++;
-    }
-    else if (Z_aVal && Z_bVal)
-    {
-      encoderZ_Pos--;
-    }
-  }
-}
-
-
-
 void doEncoderA(){
   // look for a low-to-high on channel A
-  if (digitalRead(encoderx_PinA) == HIGH) {
+  if (digitalRead(encoderx_PinA) == HIGH){
     // check channel B to see which way encoder is turning
-    if (digitalRead(encoderx_PinB) == LOW) {
+    if (digitalRead(encoderx_PinB) == LOW){
       encoderx_Pos = encoderx_Pos + 1;
     }
     else {
@@ -1224,7 +1087,7 @@ void doEncoderA(){
   else   // must be a high-to-low edge on channel A
   {
     // check channel B to see which way encoder is turning
-    if (digitalRead(encoderx_PinB) == HIGH) {
+    if (digitalRead(encoderx_PinB) == HIGH){
       encoderx_Pos = encoderx_Pos + 1;
     }
     else {
@@ -1235,11 +1098,12 @@ void doEncoderA(){
 }
 
 
+
 void doEncoderB(){
   // look for a low-to-high on channel B
-  if (digitalRead(encoderx_PinB) == HIGH) {
+  if (digitalRead(encoderx_PinB) == HIGH){
    // check channel A to see which way encoder is turning
-    if (digitalRead(encoderx_PinA) == HIGH) {
+    if (digitalRead(encoderx_PinA) == HIGH){
       encoderx_Pos = encoderx_Pos + 1;
     }
     else {
@@ -1249,7 +1113,7 @@ void doEncoderB(){
   // Look for a high-to-low on channel B
   else {
     // check channel B to see which way encoder is turning
-    if (digitalRead(encoderx_PinA) == LOW) {
+    if (digitalRead(encoderx_PinA) == LOW){
       encoderx_Pos = encoderx_Pos + 1;
     }
     else {
@@ -1257,5 +1121,27 @@ void doEncoderB(){
     }
   }
   Serial.println (encoderx_Pos);
+}
+
+
+void Encoder_y_CW(){
+  int b = digitalRead(encodery_PinA);
+  if(b > 0){
+    encodery_Pos++;
+  }
+//  else{
+//    Count_pulses--;
+//  }
+}
+
+
+void Encoder_y_CCW(){
+  int a = digitalRead(encodery_PinA);
+  if(a > 0){
+    encodery_Pos--;
+  }
+//  else{
+//    Count_pulses--;
+//  }
 }
 
